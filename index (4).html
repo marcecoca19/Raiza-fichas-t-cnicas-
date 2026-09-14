@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fichas Técnicas · Raizza</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1C1E17;
+    --paper:#F9F9F5;
+    --paper-dim:#ECECE6;
+    --line:#C7C5B6;
+    --brick:#8C4A2F;
+    --brick-dark:#6E3A24;
+    --olive:#5C6B4E;
+    --olive-dark:#47543C;
+    --warn:#B4483A;
+    --warn-bg:#F7E6E1;
+    --ok:#4C7A52;
+    --ok-bg:#E5EEE2;
+    --stock-low-bg:#F7E6E1;
+    --stock-high-bg:#F3EBD8;
+    --stock-high:#8A6A1E;
+    --radius-card: 4px;
+    --radius-pill: 999px;
+    --font-ui:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --font-mono:var(--font-ui);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font-ui);
+    line-height:1.5;
+    font-size:15px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .num, input[type=number], .cost, .money{
+    font-family:var(--font-mono);
+    font-variant-numeric:tabular-nums;
+  }
+  header{
+    padding:22px 32px 16px;
+    border-bottom:2px solid var(--ink);
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:12px;
+  }
+  header h1{
+    margin:0;
+    font-size:21px;
+    font-weight:700;
+    letter-spacing:-0.2px;
+  }
+  header .status{
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:#2E2C1A;
+  }
+  nav.main-tabs{
+    display:flex;
+    gap:0;
+    padding:0 32px;
+    background:var(--ink);
+  }
+  nav.main-tabs button{
+    appearance:none;
+    background:none;
+    border:none;
+    border-bottom:3px solid transparent;
+    padding:13px 20px;
+    font-family:var(--font-ui);
+    font-size:14px;
+    font-weight:600;
+    color:#C9C7B8;
+    cursor:pointer;
+    letter-spacing:0.2px;
+  }
+  nav.main-tabs button.active{
+    color:#fff;
+    border-bottom-color:var(--brick);
+  }
+  nav.sub-tabs{
+    display:flex;
+    gap:0;
+    padding:0 32px;
+    border-bottom:1px solid var(--line);
+    background:var(--paper-dim);
+    overflow-x:auto;
+  }
+  nav.sub-tabs button{
+    appearance:none;
+    background:none;
+    border:none;
+    border-bottom:3px solid transparent;
+    padding:12px 18px;
+    font-family:var(--font-ui);
+    font-size:14px;
+    font-weight:500;
+    color:#1F1D10;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  nav.sub-tabs button.active{
+    color:var(--ink);
+    font-weight:600;
+    border-bottom-color:var(--olive);
+  }
+  .tab-item{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding:11px 6px 11px 18px;
+    border-bottom:3px solid transparent;
+    white-space:nowrap;
+  }
+  .tab-item .tab-label{
+    font-family:var(--font-ui);
+    font-size:14px;
+    font-weight:500;
+    color:#1F1D10;
+    cursor:pointer;
+    padding-right:6px;
+  }
+  .tab-item.active{
+    border-bottom-color:var(--olive);
+  }
+  .tab-item.active .tab-label{
+    color:var(--ink);
+    font-weight:600;
+  }
+  .tab-item .tab-actions{display:flex;gap:2px;}
+  .tab-item .tab-actions .icon-btn{font-size:12px;padding:2px 4px;}
+  button.tab-add-btn{
+    appearance:none;
+    background:none;
+    border:none;
+    border-bottom:3px solid transparent;
+    padding:11px 18px;
+    font-family:var(--font-ui);
+    font-size:14px;
+    font-weight:600;
+    color:var(--olive);
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  button.tab-add-btn:hover{color:var(--olive-dark);}
+  main{
+    max-width:1180px;
+    margin:0 auto;
+    padding:26px 32px 80px;
+  }
+  .toolbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .toolbar h2{
+    margin:0;
+    font-size:19px;
+    font-weight:700;
+  }
+  .toolbar .toolbar-right{display:flex;gap:10px;align-items:center;}
+  .search-input{
+    font-family:var(--font-ui);
+    font-size:13.5px;
+    border:1px solid var(--line);
+    border-radius:var(--radius-card);
+    padding:8px 12px;
+    background:#fff;
+    color:var(--ink);
+    width:220px;
+  }
+  button.primary{
+    background:var(--brick);
+    color:#fff;
+    border:none;
+    padding:10px 18px;
+    border-radius:var(--radius-card);
+    font-family:var(--font-ui);
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  button.primary:hover{background:var(--brick-dark);}
+  button.ghost{
+    background:none;
+    border:1px solid var(--line);
+    color:var(--ink);
+    padding:6px 12px;
+    border-radius:var(--radius-card);
+    font-family:var(--font-ui);
+    font-size:13px;
+    cursor:pointer;
+  }
+  button.ghost:hover{border-color:var(--ink);}
+  button.icon-btn{
+    background:none;
+    border:none;
+    cursor:pointer;
+    color:#252313;
+    font-size:15px;
+    padding:2px 6px;
+  }
+  button.icon-btn:hover{color:var(--warn);}
+  .empty{
+    text-align:center;
+    padding:60px 20px;
+    color:#2E2C1A;
+  }
+  /* ---------- RECETAS ---------- */
+  .recipe-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:var(--radius-card);
+    margin-bottom:14px;
+    overflow:hidden;
+  }
+  .recipe-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:15px 20px;
+    cursor:pointer;
+    gap:12px;
+  }
+  .recipe-head .left{display:flex;align-items:center;gap:14px;flex:1;min-width:0;}
+  .order-btns{display:flex;flex-direction:column;gap:0;}
+  .order-btns button{font-size:12px;line-height:1;padding:2px 4px;}
+  .recipe-title-block{min-width:0;}
+  .recipe-title-block .name input{
+    font:inherit;font-weight:600;font-size:16px;border:none;background:none;width:100%;color:var(--ink);
+    border-bottom:1px dashed transparent;font-family:var(--font-ui);
+  }
+  .recipe-title-block .name input:focus{outline:none;border-bottom-color:var(--brick);}
+  .recipe-title-block .meta{font-size:12px;color:#252313;margin-top:2px;}
+  .head-right{display:flex;align-items:center;gap:18px;font-family:var(--font-mono);font-size:13px;font-variant-numeric:tabular-nums;}
+  .head-right .metric{text-align:right;}
+  .head-right .metric .label{font-size:9px;color:#2E2C1A;font-family:var(--font-ui);}
+  .head-right .metric .value{font-size:14.5px;}
+  .margen-badge{
+    padding:3px 10px;
+    border-radius:var(--radius-pill);
+    font-size:12px;
+    font-weight:600;
+    font-family:var(--font-ui);
+  }
+  .margen-ok{background:var(--ok-bg);color:var(--ok);}
+  .margen-warn{background:var(--warn-bg);color:var(--warn);}
+  .chevron{transition:transform .15s;color:#2E2C1A;}
+  .recipe-card.open .chevron{transform:rotate(90deg);}
+  .recipe-body{
+    display:none;
+    border-top:1px solid var(--line);
+    padding:20px;
+    background:var(--paper-dim);
+  }
+  .recipe-card.open .recipe-body{display:block;}
+  .field-row{display:flex;gap:16px;margin-bottom:14px;flex-wrap:wrap;}
+  .field{display:flex;flex-direction:column;gap:4px;}
+  .field label{font-size:12.5px;color:#252313;font-weight:500;}
+  .field input, .field select, .field textarea{
+    font-family:var(--font-ui);
+    font-size:14px;
+    border:1px solid var(--line);
+    border-radius:var(--radius-card);
+    padding:7px 9px;
+    background:#fff;
+    color:var(--ink);
+  }
+  .field textarea{width:280px;min-height:44px;resize:vertical;}
+  table.ingredientes{width:100%;border-collapse:collapse;margin-bottom:10px;}
+  table.ingredientes th{
+    text-align:left;font-size:12px;color:#252313;font-weight:600;
+    padding:5px 6px;border-bottom:1px solid var(--line);
+  }
+  table.ingredientes td{padding:5px 6px;border-bottom:1px solid #E2E2DA;vertical-align:middle;}
+  table.ingredientes input, table.ingredientes select{
+    width:100%;border:none;background:none;font-family:var(--font-ui);font-size:13.5px;padding:4px 2px;color:var(--ink);
+  }
+  table.ingredientes input:focus, table.ingredientes select:focus{outline:none;background:#FDFDFB;}
+  table.ingredientes td.subtotal{font-family:var(--font-mono);font-size:13px;font-weight:600;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;}
+  table.ingredientes td.unit-hint{font-size:12px;color:#2E2C1A;white-space:nowrap;}
+  .section-label{font-size:12px;font-weight:700;color:#1F1D10;margin:16px 0 8px;text-transform:uppercase;letter-spacing:.4px;}
+  .add-row-btn{font-size:12.5px;font-weight:600;color:var(--olive);background:none;border:none;cursor:pointer;padding:4px 0;}
+  .add-row-btn:hover{color:var(--olive-dark);}
+  .summary-panel{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:14px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:var(--radius-card);
+    padding:16px;
+    margin-top:14px;
+  }
+  .summary-panel .item .label{font-size:12px;color:#252313;font-weight:500;}
+  .summary-panel .item .value{font-family:var(--font-mono);font-size:17px;font-weight:600;margin-top:2px;font-variant-numeric:tabular-nums;}
+  .summary-panel .item.highlight .value{color:var(--brick);font-weight:600;}
+  .iva-note{font-size:12px;color:#252313;margin-top:10px;}
+  /* ---------- PREPARACIONES ---------- */
+  .prep-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-card);padding:16px 20px;margin-bottom:14px;}
+  .prep-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+  .prep-card-head input{font-size:16px;font-weight:600;font-family:var(--font-ui);border:none;background:none;color:var(--ink);width:260px;}
+  .prep-card-head input:focus{outline:none;}
+  .prep-yield{display:flex;gap:10px;align-items:center;font-size:13.5px;color:#1F1D10;margin-bottom:10px;}
+  .prep-yield input{width:70px;font-family:var(--font-ui);}
+  .prep-yield input, .prep-yield select{border:1px solid var(--line);border-radius:var(--radius-card);padding:5px 7px;background:#fff;color:var(--ink);font-size:13.5px;}
+  /* ---------- INGREDIENTES (catálogo maestro) ---------- */
+  table.catalogo{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:var(--radius-card);overflow:hidden;}
+  table.catalogo thead th{
+    text-align:left;font-size:12.5px;color:#252313;font-weight:700;text-transform:uppercase;letter-spacing:.3px;
+    padding:10px 12px;border-bottom:2px solid var(--line);background:var(--paper-dim);
+  }
+  table.catalogo tbody td{padding:8px 12px;border-bottom:1px solid #ECECE6;}
+  table.catalogo tbody tr:last-child td{border-bottom:none;}
+  table.catalogo input, table.catalogo select{
+    width:100%;border:none;background:none;font-family:var(--font-ui);font-size:14px;padding:5px 3px;color:var(--ink);border-radius:3px;
+  }
+  table.catalogo input:focus, table.catalogo select:focus{outline:none;background:#FDFDFB;}
+  table.catalogo input[type=number]{font-family:var(--font-mono);font-variant-numeric:tabular-nums;}
+  .stock-badge{
+    display:inline-block;padding:3px 9px;border-radius:var(--radius-pill);font-size:12px;font-weight:600;
+    white-space:nowrap;
+  }
+  .stock-badge.low{background:var(--stock-low-bg);color:var(--warn);}
+  .stock-badge.high{background:var(--stock-high-bg);color:var(--stock-high);}
+  .stock-badge.ok{background:var(--ok-bg);color:var(--ok);}
+  .save-flash{
+    position:fixed;bottom:20px;right:24px;
+    background:var(--ink);color:var(--paper);
+    padding:8px 16px;border-radius:var(--radius-card);
+    font-size:12px;font-family:var(--font-mono);
+    opacity:0;transition:opacity .3s;pointer-events:none;
+  }
+  .save-flash.show{opacity:1;}
+  @media (max-width:640px){
+    header, nav.main-tabs, nav.sub-tabs, main{padding-left:16px;padding-right:16px;}
+    .head-right{display:none;}
+    .field textarea{width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Fichas Técnicas — Raizza</h1>
+  <div class="status" id="statusLine">conectando…</div>
+</header>
+
+<nav class="main-tabs" id="mainTabs"></nav>
+<nav class="sub-tabs" id="subTabs"></nav>
+
+<main id="mainArea"></main>
+
+<div class="save-flash" id="saveFlash">Guardado</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore, collection, doc, onSnapshot, setDoc, addDoc,
+  deleteDoc, updateDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+// ---------- FIREBASE CONFIG ----------
+// Reemplazá estos valores con los de tu proyecto Firebase nuevo (independiente).
+const firebaseConfig = {
+  apiKey: "REEMPLAZAR",
+  authDomain: "REEMPLAZAR.firebaseapp.com",
+  projectId: "REEMPLAZAR",
+  storageBucket: "REEMPLAZAR.appspot.com",
+  messagingSenderId: "REEMPLAZAR",
+  appId: "REEMPLAZAR"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+const statusLine = document.getElementById('statusLine');
+signInAnonymously(auth).then(()=>{ statusLine.textContent = 'en línea'; }).catch(err=>{
+  statusLine.textContent = 'error de conexión';
+  console.error(err);
+});
+
+// ---------- STATE ----------
+let turnos = [];        // {id, nombre, orden}
+let recetas = [];       // {id, turnoId, nombre, categoria, porciones, ingredientes:[{ingredienteId,cantidad}], preparacionesUsadas:[{prepId,cantidad}], precioVenta, notas, orden}
+let preparaciones = [];  // {id, nombre, ingredientes:[{ingredienteId,cantidad}], rendimientoCantidad, rendimientoUnidad, orden}
+let catalogo = [];       // {id, nombre, tipo:'gramos'|'unidad', costoUnitario, stockActual, puntoPedido, puntoMaximo, orden}
+let mainView = 'recetas'; // 'recetas' | 'preparaciones' | 'ingredientes'
+let activeTurnoId = null;
+let openCardId = null;
+let recetasFiltro = '';
+let catalogoFiltro = '';
+const IVA = 0.10;
+
+const DEFAULT_TURNOS = ['Almuerzo','Merienda','Cena'];
+
+// ---------- FIRESTORE LISTENERS ----------
+const colTurnos = collection(db,'turnos');
+const colRecetas = collection(db,'recetas');
+const colPreps = collection(db,'preparaciones');
+const colCatalogo = collection(db,'ingredientesCatalogo');
+
+onSnapshot(colTurnos, snap=>{
+  turnos = snap.docs.map(d=>({id:d.id, ...d.data()})).sort((a,b)=>(a.orden||0)-(b.orden||0));
+  if(turnos.length===0){ seedTurnos(); return; }
+  if(!activeTurnoId) activeTurnoId = turnos[0].id;
+  render();
+});
+onSnapshot(colRecetas, snap=>{
+  recetas = snap.docs.map(d=>({id:d.id, ...d.data()})).sort((a,b)=>(a.orden||0)-(b.orden||0));
+  render();
+});
+onSnapshot(colPreps, snap=>{
+  preparaciones = snap.docs.map(d=>({id:d.id, ...d.data()})).sort((a,b)=>(a.orden||0)-(b.orden||0));
+  render();
+});
+onSnapshot(colCatalogo, snap=>{
+  catalogo = snap.docs.map(d=>({id:d.id, ...d.data()})).sort((a,b)=>(a.nombre||'').localeCompare(b.nombre||''));
+  render();
+});
+
+async function seedTurnos(){
+  for(let i=0;i<DEFAULT_TURNOS.length;i++){
+    await addDoc(colTurnos, {nombre:DEFAULT_TURNOS[i], orden:i});
+  }
+}
+
+// ---------- SAVE HELPERS (debounced autosave) ----------
+const debounceTimers = {};
+function debouncedSave(key, fn, ms=900){
+  clearTimeout(debounceTimers[key]);
+  debounceTimers[key] = setTimeout(async ()=>{
+    await fn();
+    flashSaved();
+  }, ms);
+}
+function flashSaved(){
+  const el = document.getElementById('saveFlash');
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 1000);
+}
+
+// ---------- CATALOGO HELPERS ----------
+function getIng(id){ return catalogo.find(c=>c.id===id); }
+function costoLinea(item){
+  const ing = getIng(item.ingredienteId);
+  if(!ing) return 0;
+  const cant = parseFloat(item.cantidad)||0;
+  const costoUnit = parseFloat(ing.costoUnitario)||0;
+  return cant*costoUnit;
+}
+function calcCostoUnitario(ing){
+  const cant = parseFloat(ing.cantidadCompra)||1;
+  const costo = parseFloat(ing.costoCompra)||0;
+  return costo/cant;
+}
+function stockEstado(ing){
+  const actual = parseFloat(ing.stockActual);
+  const min = parseFloat(ing.puntoPedido);
+  const max = parseFloat(ing.puntoMaximo);
+  if(isNaN(actual)) return null;
+  if(!isNaN(min) && actual<=min) return 'low';
+  if(!isNaN(max) && max>0 && actual>max) return 'high';
+  return 'ok';
+}
+
+// ---------- CALC ----------
+function costoPreparacion(prep){
+  const total = (prep.ingredientes||[]).reduce((s,i)=>s+costoLinea(i),0);
+  const rend = parseFloat(prep.rendimientoCantidad)||1;
+  return { total, porUnidad: total/rend };
+}
+function costoReceta(receta){
+  const costoIngredientes = (receta.ingredientes||[]).reduce((s,i)=>s+costoLinea(i),0);
+  const costoPreps = (receta.preparacionesUsadas||[]).reduce((s,pu)=>{
+    const prep = preparaciones.find(p=>p.id===pu.prepId);
+    if(!prep) return s;
+    const {porUnidad} = costoPreparacion(prep);
+    return s + porUnidad*(parseFloat(pu.cantidad)||0);
+  },0);
+  const total = costoIngredientes + costoPreps;
+  const porciones = parseFloat(receta.porciones)||1;
+  return { total, porPorcion: total/porciones };
+}
+function margen(receta){
+  const {porPorcion} = costoReceta(receta);
+  const precio = parseFloat(receta.precioVenta)||0;
+  if(precio<=0) return null;
+  return ((precio - porPorcion)/precio)*100;
+}
+function fmtGs(n){
+  if(isNaN(n)) return '—';
+  return 'Gs. ' + Math.round(n).toLocaleString('es-PY');
+}
+
+// ---------- RENDER ----------
+function render(){
+  renderMainTabs();
+  renderSubTabs();
+  renderMain();
+}
+
+function renderMainTabs(){
+  const nav = document.getElementById('mainTabs');
+  nav.innerHTML = '';
+  const items = [
+    {id:'recetas', label:'Recetas'},
+    {id:'preparaciones', label:'Preparación base'},
+    {id:'ingredientes', label:'Ingredientes'},
+  ];
+  items.forEach(it=>{
+    const b = document.createElement('button');
+    b.textContent = it.label;
+    b.className = mainView===it.id ? 'active' : '';
+    b.onclick = ()=>{ mainView = it.id; render(); };
+    nav.appendChild(b);
+  });
+}
+
+function renderSubTabs(){
+  const nav = document.getElementById('subTabs');
+  nav.innerHTML = '';
+  if(mainView!=='recetas'){ nav.style.display='none'; return; }
+  nav.style.display='flex';
+  if(!activeTurnoId && turnos.length) activeTurnoId = turnos[0].id;
+  turnos.forEach(t=>{
+    const item = document.createElement('div');
+    item.className = 'tab-item' + (activeTurnoId===t.id ? ' active' : '');
+    const label = document.createElement('span');
+    label.className='tab-label';
+    label.textContent = t.nombre;
+    label.onclick = ()=>{ activeTurnoId=t.id; render(); };
+    item.appendChild(label);
+    if(activeTurnoId===t.id){
+      const actions = document.createElement('span');
+      actions.className='tab-actions';
+      const editBtn = document.createElement('button');
+      editBtn.className='icon-btn'; editBtn.textContent='✎'; editBtn.title='Renombrar categoría';
+      editBtn.onclick = (e)=>{
+        e.stopPropagation();
+        const nuevoNombre = prompt('Nuevo nombre para la categoría:', t.nombre);
+        if(nuevoNombre && nuevoNombre.trim()){
+          updateDoc(doc(colTurnos,t.id), {nombre:nuevoNombre.trim()});
+        }
+      };
+      const delBtn = document.createElement('button');
+      delBtn.className='icon-btn'; delBtn.textContent='✕'; delBtn.title='Eliminar categoría';
+      delBtn.onclick = async (e)=>{
+        e.stopPropagation();
+        const recetasEnCategoria = recetas.filter(r=>r.turnoId===t.id);
+        if(recetasEnCategoria.length>0){
+          alert('Esta categoría tiene '+recetasEnCategoria.length+' receta(s) cargada(s). Movelas o eliminalas antes de borrar la categoría.');
+          return;
+        }
+        if(confirm('¿Eliminar la categoría "'+t.nombre+'"?')){
+          await deleteDoc(doc(colTurnos,t.id));
+          if(activeTurnoId===t.id) activeTurnoId = null;
+        }
+      };
+      actions.appendChild(editBtn);
+      actions.appendChild(delBtn);
+      item.appendChild(actions);
+    }
+    nav.appendChild(item);
+  });
+  const addBtn = document.createElement('button');
+  addBtn.className='tab-add-btn';
+  addBtn.textContent = '+ Categoría';
+  addBtn.onclick = async ()=>{
+    const nombre = prompt('Nombre de la nueva categoría (ej: Menú ejecutivo, Tragos):');
+    if(nombre && nombre.trim()){
+      const ref = await addDoc(colTurnos, {nombre:nombre.trim(), orden: turnos.length});
+      activeTurnoId = ref.id;
+    }
+  };
+  nav.appendChild(addBtn);
+}
+
+function renderMain(){
+  const main = document.getElementById('mainArea');
+  main.innerHTML = '';
+  if(mainView==='preparaciones'){ renderPreparacionesView(main); return; }
+  if(mainView==='ingredientes'){ renderIngredientesView(main); return; }
+  renderTurnoView(main);
+}
+
+// ================= RECETAS =================
+function renderTurnoView(main){
+  const turno = turnos.find(t=>t.id===activeTurnoId);
+  let misRecetas = recetas.filter(r=>r.turnoId===activeTurnoId).sort((a,b)=>(a.orden||0)-(b.orden||0));
+
+  const toolbar = document.createElement('div');
+  toolbar.className = 'toolbar';
+  toolbar.innerHTML = `<h2>${turno?turno.nombre:''}</h2>`;
+  const addBtn = document.createElement('button');
+  addBtn.className='primary';
+  addBtn.textContent = '+ Nueva receta';
+  addBtn.onclick = async ()=>{
+    const nueva = {
+      turnoId: activeTurnoId, nombre:'Receta sin nombre', categoria:'plato',
+      porciones:1, ingredientes:[], preparacionesUsadas:[], precioVenta:0, notas:'',
+      orden: misRecetas.length
+    };
+    const ref = await addDoc(colRecetas, nueva);
+    openCardId = ref.id;
+  };
+  toolbar.appendChild(addBtn);
+  main.appendChild(toolbar);
+
+  if(misRecetas.length===0){
+    const e = document.createElement('div');
+    e.className='empty';
+    e.textContent = 'Todavía no hay recetas en este turno.';
+    main.appendChild(e);
+    return;
+  }
+
+  misRecetas.forEach((r,idx)=>{
+    main.appendChild(renderRecetaCard(r, idx, misRecetas.length));
+  });
+}
+
+function renderRecetaCard(r, idx, total){
+  const {porPorcion} = costoReceta(r);
+  const m = margen(r);
+  const card = document.createElement('div');
+  card.className = 'recipe-card' + (openCardId===r.id?' open':'');
+
+  const head = document.createElement('div');
+  head.className='recipe-head';
+  head.onclick = (e)=>{
+    if(e.target.closest('.order-btns') || e.target.closest('.icon-btn')) return;
+    openCardId = openCardId===r.id ? null : r.id;
+    render();
+  };
+
+  const left = document.createElement('div');
+  left.className='left';
+
+  const orderBtns = document.createElement('div');
+  orderBtns.className='order-btns';
+  const upBtn = document.createElement('button'); upBtn.className='icon-btn'; upBtn.textContent='▲';
+  upBtn.disabled = idx===0;
+  upBtn.onclick = ()=>moveReceta(r, -1);
+  const downBtn = document.createElement('button'); downBtn.className='icon-btn'; downBtn.textContent='▼';
+  downBtn.disabled = idx===total-1;
+  downBtn.onclick = ()=>moveReceta(r, 1);
+  orderBtns.appendChild(upBtn); orderBtns.appendChild(downBtn);
+
+  const titleBlock = document.createElement('div');
+  titleBlock.className='recipe-title-block';
+  titleBlock.innerHTML = `
+    <div class="name"><input value="${escapeAttr(r.nombre)}"/></div>
+    <div class="meta">${r.categoria} · ${r.porciones||1} porción(es)</div>
+  `;
+  titleBlock.querySelector('input').onclick = e=>e.stopPropagation();
+  titleBlock.querySelector('input').oninput = e=>{
+    r.nombre = e.target.value;
+    debouncedSave('nombre-'+r.id, ()=>updateDoc(doc(colRecetas,r.id),{nombre:r.nombre}));
+  };
+
+  left.appendChild(orderBtns);
+  const chev = document.createElement('span'); chev.innerHTML='<span class="chevron">›</span>';
+  left.appendChild(chev);
+  left.appendChild(titleBlock);
+
+  const right = document.createElement('div');
+  right.className='head-right';
+  right.innerHTML = `
+    <div class="metric"><div class="label">costo/porción</div><div class="value">${fmtGs(porPorcion)}</div></div>
+    <div class="metric"><div class="label">precio</div><div class="value">${fmtGs(r.precioVenta)}</div></div>
+    <span class="margen-badge ${m===null?'':(m>=60?'margen-ok':'margen-warn')}">${m===null?'—':m.toFixed(0)+'%'}</span>
+    <button class="icon-btn" title="Eliminar">✕</button>
+  `;
+  right.querySelector('button.icon-btn').onclick = async (e)=>{
+    e.stopPropagation();
+    if(confirm('¿Eliminar "'+r.nombre+'"?')) await deleteDoc(doc(colRecetas,r.id));
+  };
+
+  head.appendChild(left);
+  head.appendChild(right);
+  card.appendChild(head);
+
+  const body = document.createElement('div');
+  body.className='recipe-body';
+  body.appendChild(renderRecetaBody(r));
+  card.appendChild(body);
+
+  return card;
+}
+
+function renderRecetaBody(r){
+  const wrap = document.createElement('div');
+
+  const fieldRow = document.createElement('div');
+  fieldRow.className='field-row';
+  fieldRow.innerHTML = `
+    <div class="field">
+      <label>Categoría</label>
+      <select data-field="categoria">
+        ${['entrada','plato','postre','bebida','guarnición'].map(c=>`<option value="${c}" ${r.categoria===c?'selected':''}>${c}</option>`).join('')}
+      </select>
+    </div>
+    <div class="field">
+      <label>Porciones que rinde</label>
+      <input type="number" min="1" step="1" value="${r.porciones||1}" data-field="porciones"/>
+    </div>
+    <div class="field">
+      <label>Precio de venta (Gs.)</label>
+      <input type="number" min="0" step="500" value="${r.precioVenta||0}" data-field="precioVenta"/>
+    </div>
+    <div class="field" style="flex:1;min-width:200px;">
+      <label>Notas</label>
+      <textarea data-field="notas">${escapeText(r.notas||'')}</textarea>
+    </div>
+  `;
+  fieldRow.querySelector('[data-field=categoria]').onchange = e=>{
+    r.categoria = e.target.value;
+    updateDoc(doc(colRecetas,r.id),{categoria:r.categoria});
+  };
+  fieldRow.querySelector('[data-field=porciones]').oninput = e=>{
+    r.porciones = e.target.value;
+    debouncedSave('porciones-'+r.id, ()=>updateDoc(doc(colRecetas,r.id),{porciones:parseFloat(r.porciones)||1}));
+    refreshSummary(r);
+  };
+  fieldRow.querySelector('[data-field=precioVenta]').oninput = e=>{
+    r.precioVenta = e.target.value;
+    debouncedSave('precio-'+r.id, ()=>updateDoc(doc(colRecetas,r.id),{precioVenta:parseFloat(r.precioVenta)||0}));
+    refreshSummary(r);
+  };
+  fieldRow.querySelector('[data-field=notas]').oninput = e=>{
+    r.notas = e.target.value;
+    debouncedSave('notas-'+r.id, ()=>updateDoc(doc(colRecetas,r.id),{notas:r.notas}));
+  };
+  wrap.appendChild(fieldRow);
+
+  const secLabel = document.createElement('div');
+  secLabel.className='section-label';
+  secLabel.textContent='Ingredientes';
+  wrap.appendChild(secLabel);
+
+  if(catalogo.length===0){
+    const hint = document.createElement('div');
+    hint.style.cssText='font-size:13px;color:#2E2C1A;margin-bottom:10px;';
+    hint.textContent = 'Todavía no cargaste ingredientes en el catálogo. Andá a la pestaña "Ingredientes" para empezar a cargarlos, o agregá uno rápido abajo.';
+    wrap.appendChild(hint);
+  }
+
+  wrap.appendChild(renderIngredientTable(r.ingredientes||[], (items)=>{
+    r.ingredientes = items;
+    saveIngredientes(r);
+    refreshSummary(r);
+  }, r));
+
+  const secLabel2 = document.createElement('div');
+  secLabel2.className='section-label';
+  secLabel2.textContent='Preparaciones base usadas';
+  wrap.appendChild(secLabel2);
+
+  (r.preparacionesUsadas||[]).forEach((pu,i)=>{
+    const row = document.createElement('div');
+    row.style.cssText='display:flex;gap:10px;align-items:center;margin-bottom:6px;';
+    row.innerHTML = `
+      <select style="flex:1;font-family:var(--font-ui);font-size:13.5px;border:1px solid var(--line);border-radius:4px;padding:6px 8px;background:#fff;">
+        <option value="">— elegir preparación —</option>
+        ${preparaciones.map(p=>`<option value="${p.id}" ${pu.prepId===p.id?'selected':''}>${escapeAttr(p.nombre)}</option>`).join('')}
+      </select>
+      <input type="number" step="0.01" placeholder="cantidad" value="${pu.cantidad||''}" style="width:100px;font-family:var(--font-ui);border:1px solid var(--line);border-radius:4px;padding:6px 8px;"/>
+      <button class="icon-btn">✕</button>
+    `;
+    row.querySelector('select').onchange = e=>{ pu.prepId=e.target.value; savePreparacionesUsadas(r); refreshSummary(r); };
+    row.querySelector('input').oninput = e=>{ pu.cantidad=e.target.value; savePreparacionesUsadas(r); refreshSummary(r); };
+    row.querySelector('button').onclick = ()=>{ r.preparacionesUsadas.splice(i,1); savePreparacionesUsadas(r); render(); };
+    wrap.appendChild(row);
+  });
+  const addPrepBtn = document.createElement('button');
+  addPrepBtn.className='add-row-btn';
+  addPrepBtn.textContent='+ Usar preparación base';
+  addPrepBtn.onclick = ()=>{
+    r.preparacionesUsadas = r.preparacionesUsadas||[];
+    r.preparacionesUsadas.push({prepId:'',cantidad:''});
+    savePreparacionesUsadas(r); render();
+  };
+  wrap.appendChild(addPrepBtn);
+
+  const summary = document.createElement('div');
+  summary.className='summary-panel';
+  summary.id = 'summary-'+r.id;
+  wrap.appendChild(summary);
+  fillSummary(summary, r);
+
+  return wrap;
+}
+
+// Tabla de ingredientes reutilizable (recetas y preparaciones), enlazada al catálogo maestro
+function renderIngredientTable(items, onChange, ownerForQuickAdd){
+  const table = document.createElement('table');
+  table.className='ingredientes';
+  table.innerHTML = `
+    <thead><tr>
+      <th style="width:34%">Ingrediente</th>
+      <th style="width:14%">Cantidad</th>
+      <th style="width:16%">Unidad</th>
+      <th style="width:18%">Costo unitario</th>
+      <th style="width:14%">Subtotal</th>
+      <th style="width:4%"></th>
+    </tr></thead>
+    <tbody></tbody>
+  `;
+  const tbody = table.querySelector('tbody');
+  const catalogoOrdenado = [...catalogo].sort((a,b)=>(a.nombre||'').localeCompare(b.nombre||''));
+
+  items.forEach((item,i)=>{
+    const ing = getIng(item.ingredienteId);
+    const tr = document.createElement('tr');
+    const selectHtml = `
+      <select>
+        <option value="">— elegir —</option>
+        ${catalogoOrdenado.map(c=>`<option value="${c.id}" ${item.ingredienteId===c.id?'selected':''}>${escapeAttr(c.nombre)}</option>`).join('')}
+        <option value="__nuevo__">+ Agregar nuevo ingrediente…</option>
+      </select>`;
+    tr.innerHTML = `
+      <td>${selectHtml}</td>
+      <td><input type="number" step="0.01" value="${item.cantidad||''}" placeholder="0"/></td>
+      <td class="unit-hint">${ing ? (ing.tipo==='unidad'?'por unidad':'por gramo/ml') : '—'}</td>
+      <td class="unit-hint">${ing ? fmtGs(ing.costoUnitario) : '—'}</td>
+      <td class="subtotal">${fmtGs(costoLinea(item))}</td>
+      <td><button class="icon-btn">✕</button></td>
+    `;
+    const select = tr.querySelector('select');
+    select.onchange = async (e)=>{
+      if(e.target.value==='__nuevo__'){
+        const nombre = prompt('Nombre del nuevo ingrediente:');
+        if(!nombre){ e.target.value = item.ingredienteId||''; return; }
+        const ref = await addDoc(colCatalogo, {
+          nombre, tipo:'gramos', cantidadCompra:1, costoCompra:0, costoUnitario:0,
+          stockActual:0, puntoPedido:0, puntoMaximo:0
+        });
+        item.ingredienteId = ref.id;
+      } else {
+        item.ingredienteId = e.target.value;
+      }
+      onChange(items);
+    };
+    tr.querySelector('input').oninput = e=>{
+      item.cantidad = e.target.value;
+      onChange(items);
+      tr.querySelector('.subtotal').textContent = fmtGs(costoLinea(item));
+    };
+    tr.querySelector('button.icon-btn').onclick = ()=>{
+      items.splice(i,1);
+      onChange(items);
+      render();
+    };
+    tbody.appendChild(tr);
+  });
+
+  const wrapDiv = document.createElement('div');
+  wrapDiv.appendChild(table);
+  const addBtn = document.createElement('button');
+  addBtn.className='add-row-btn';
+  addBtn.textContent='+ Agregar ingrediente';
+  addBtn.onclick = ()=>{
+    items.push({ingredienteId:'',cantidad:''});
+    onChange(items);
+    render();
+  };
+  wrapDiv.appendChild(addBtn);
+  return wrapDiv;
+}
+
+function fillSummary(el, r){
+  const {total, porPorcion} = costoReceta(r);
+  const precio = parseFloat(r.precioVenta)||0;
+  const m = margen(r);
+  const ganancia = precio - porPorcion;
+  const precioSinIva = precio/(1+IVA);
+  el.innerHTML = `
+    <div class="item"><div class="label">costo total receta</div><div class="value">${fmtGs(total)}</div></div>
+    <div class="item highlight"><div class="label">costo por porción</div><div class="value">${fmtGs(porPorcion)}</div></div>
+    <div class="item"><div class="label">precio de venta</div><div class="value">${fmtGs(precio)}</div></div>
+    <div class="item"><div class="label">margen bruto</div><div class="value">${m===null?'—':m.toFixed(1)+'%'}</div></div>
+    <div class="item highlight"><div class="label">ganancia por porción</div><div class="value">${precio>0?fmtGs(ganancia):'—'}</div></div>
+  `;
+  const note = document.createElement('div');
+  note.className='iva-note';
+  note.textContent = `Precio sin IVA (10%): ${fmtGs(precioSinIva)} · costo/precio: ${precio>0?((porPorcion/precio)*100).toFixed(1)+'%':'—'}`;
+  el.parentElement.appendChild(note);
+}
+
+function refreshSummary(r){
+  const el = document.getElementById('summary-'+r.id);
+  if(!el) return;
+  const next = el.nextSibling;
+  if(next && next.classList && next.classList.contains('iva-note')) next.remove();
+  fillSummary(el, r);
+}
+
+function saveIngredientes(r){
+  debouncedSave('ing-'+r.id, ()=>updateDoc(doc(colRecetas,r.id),{ingredientes:r.ingredientes}), 700);
+}
+function savePreparacionesUsadas(r){
+  debouncedSave('pu-'+r.id, ()=>updateDoc(doc(colRecetas,r.id),{preparacionesUsadas:r.preparacionesUsadas}), 700);
+}
+
+async function moveReceta(r, dir){
+  const hermanas = recetas.filter(x=>x.turnoId===r.turnoId).sort((a,b)=>(a.orden||0)-(b.orden||0));
+  const idx = hermanas.findIndex(x=>x.id===r.id);
+  const swapIdx = idx+dir;
+  if(swapIdx<0 || swapIdx>=hermanas.length) return;
+  const a = hermanas[idx], b = hermanas[swapIdx];
+  const ordenA = a.orden||0, ordenB = b.orden||0;
+  await updateDoc(doc(colRecetas,a.id), {orden: ordenB});
+  await updateDoc(doc(colRecetas,b.id), {orden: ordenA});
+}
+
+// ================= PREPARACIONES BASE =================
+function renderPreparacionesView(main){
+  const toolbar = document.createElement('div');
+  toolbar.className='toolbar';
+  toolbar.innerHTML = `<h2>Preparación base</h2>`;
+  const addBtn = document.createElement('button');
+  addBtn.className='primary';
+  addBtn.textContent='+ Nueva preparación';
+  addBtn.onclick = async ()=>{
+    await addDoc(colPreps, {
+      nombre:'Preparación sin nombre', ingredientes:[],
+      rendimientoCantidad:1, rendimientoUnidad:'porciones', orden: preparaciones.length
+    });
+  };
+  toolbar.appendChild(addBtn);
+  main.appendChild(toolbar);
+
+  if(preparaciones.length===0){
+    const e = document.createElement('div');
+    e.className='empty';
+    e.textContent='Todavía no hay preparaciones base (ej. salsas, masas, fondos).';
+    main.appendChild(e);
+    return;
+  }
+
+  preparaciones.forEach(p=>main.appendChild(renderPrepCard(p)));
+}
+
+function renderPrepCard(p){
+  const {total, porUnidad} = costoPreparacion(p);
+  const card = document.createElement('div');
+  card.className='prep-card';
+
+  const head = document.createElement('div');
+  head.className='prep-card-head';
+  head.innerHTML = `<input value="${escapeAttr(p.nombre)}"/>`;
+  const delBtn = document.createElement('button');
+  delBtn.className='icon-btn'; delBtn.textContent='✕';
+  delBtn.onclick = async ()=>{ if(confirm('¿Eliminar "'+p.nombre+'"?')) await deleteDoc(doc(colPreps,p.id)); };
+  head.appendChild(delBtn);
+  head.querySelector('input').oninput = e=>{
+    p.nombre = e.target.value;
+    debouncedSave('prepnombre-'+p.id, ()=>updateDoc(doc(colPreps,p.id),{nombre:p.nombre}));
+  };
+  card.appendChild(head);
+
+  const yieldRow = document.createElement('div');
+  yieldRow.className='prep-yield';
+  yieldRow.innerHTML = `
+    Rinde <input type="number" step="0.01" value="${p.rendimientoCantidad||1}"/>
+    <select>
+      <option value="porciones" ${p.rendimientoUnidad==='porciones'?'selected':''}>porciones</option>
+      <option value="gramos" ${p.rendimientoUnidad==='gramos'?'selected':''}>gramos</option>
+      <option value="ml" ${p.rendimientoUnidad==='ml'?'selected':''}>ml</option>
+      <option value="unidades" ${p.rendimientoUnidad==='unidades'?'selected':''}>unidades</option>
+    </select>
+  `;
+  yieldRow.querySelector('input').oninput = e=>{
+    p.rendimientoCantidad = e.target.value;
+    debouncedSave('prepyield-'+p.id, ()=>updateDoc(doc(colPreps,p.id),{rendimientoCantidad:parseFloat(p.rendimientoCantidad)||1}));
+    refreshPrepSummary(p);
+  };
+  yieldRow.querySelector('select').onchange = e=>{
+    p.rendimientoUnidad = e.target.value;
+    updateDoc(doc(colPreps,p.id),{rendimientoUnidad:p.rendimientoUnidad});
+  };
+  card.appendChild(yieldRow);
+
+  card.appendChild(renderIngredientTable(p.ingredientes||[], (items)=>{
+    p.ingredientes = items;
+    savePrepIngredientes(p);
+    refreshPrepSummary(p);
+  }, p));
+
+  const summary = document.createElement('div');
+  summary.className='summary-panel';
+  summary.id = 'prepsummary-'+p.id;
+  summary.innerHTML = `
+    <div class="item"><div class="label">costo total</div><div class="value">${fmtGs(total)}</div></div>
+    <div class="item highlight"><div class="label">costo por ${p.rendimientoUnidad||'unidad'}</div><div class="value">${fmtGs(porUnidad)}</div></div>
+  `;
+  card.appendChild(summary);
+
+  return card;
+}
+
+function refreshPrepSummary(p){
+  const el = document.getElementById('prepsummary-'+p.id);
+  if(!el) return;
+  const {total, porUnidad} = costoPreparacion(p);
+  el.innerHTML = `
+    <div class="item"><div class="label">costo total</div><div class="value">${fmtGs(total)}</div></div>
+    <div class="item highlight"><div class="label">costo por ${p.rendimientoUnidad||'unidad'}</div><div class="value">${fmtGs(porUnidad)}</div></div>
+  `;
+}
+function savePrepIngredientes(p){
+  debouncedSave('preping-'+p.id, ()=>updateDoc(doc(colPreps,p.id),{ingredientes:p.ingredientes}), 700);
+}
+
+// ================= INGREDIENTES (catálogo maestro + stock) =================
+function renderIngredientesView(main){
+  const toolbar = document.createElement('div');
+  toolbar.className='toolbar';
+  toolbar.innerHTML = `<h2>Ingredientes</h2>`;
+  const right = document.createElement('div');
+  right.className='toolbar-right';
+  const searchInput = document.createElement('input');
+  searchInput.className='search-input';
+  searchInput.placeholder='Buscar ingrediente…';
+  searchInput.value = catalogoFiltro;
+  searchInput.oninput = e=>{ catalogoFiltro = e.target.value; render(); };
+  right.appendChild(searchInput);
+  const addBtn = document.createElement('button');
+  addBtn.className='primary';
+  addBtn.textContent='+ Nuevo ingrediente';
+  addBtn.onclick = async ()=>{
+    await addDoc(colCatalogo, {
+      nombre:'Nuevo ingrediente', tipo:'gramos',
+      cantidadCompra:1, costoCompra:0, costoUnitario:0,
+      stockActual:0, puntoPedido:0, puntoMaximo:0
+    });
+  };
+  right.appendChild(addBtn);
+  toolbar.appendChild(right);
+  main.appendChild(toolbar);
+
+  const filtrados = catalogo.filter(c=>
+    (c.nombre||'').toLowerCase().includes(catalogoFiltro.toLowerCase())
+  );
+
+  if(catalogo.length===0){
+    const e = document.createElement('div');
+    e.className='empty';
+    e.textContent='Todavía no cargaste ingredientes. Cargá acá todo lo que usás en el restaurant — desde café hasta bananas — con su costo y stock.';
+    main.appendChild(e);
+    return;
+  }
+  if(filtrados.length===0){
+    const e = document.createElement('div');
+    e.className='empty';
+    e.textContent='Ningún ingrediente coincide con la búsqueda.';
+    main.appendChild(e);
+    return;
+  }
+
+  const scrollWrap = document.createElement('div');
+  scrollWrap.style.cssText='overflow-x:auto;';
+  const table = document.createElement('table');
+  table.className='catalogo';
+  table.style.minWidth='1300px';
+  table.innerHTML = `
+    <thead><tr>
+      <th style="width:16%">Ingrediente</th>
+      <th style="width:9%">Unidad</th>
+      <th style="width:12%">Cantidad comprada</th>
+      <th style="width:13%">Costo de esa compra (Gs.)</th>
+      <th style="width:12%">Costo unitario (calculado)</th>
+      <th style="width:10%">Stock actual</th>
+      <th style="width:10%">Punto de pedido</th>
+      <th style="width:10%">Punto máximo</th>
+      <th style="width:8%">Estado</th>
+      <th style="width:3%"></th>
+    </tr></thead>
+    <tbody></tbody>
+  `;
+  const tbody = table.querySelector('tbody');
+  filtrados.forEach(ing=>{
+    const tr = document.createElement('tr');
+    const unidadLabel = ing.tipo==='unidad' ? 'unid.' : 'g/ml';
+    const costoUnitarioActual = calcCostoUnitario(ing);
+    tr.innerHTML = `
+      <td><input value="${escapeAttr(ing.nombre)}"/></td>
+      <td>
+        <select>
+          <option value="gramos" ${ing.tipo!=='unidad'?'selected':''}>gramo/ml</option>
+          <option value="unidad" ${ing.tipo==='unidad'?'selected':''}>unidad</option>
+        </select>
+      </td>
+      <td><input type="number" step="0.01" value="${ing.cantidadCompra||1}" title="ej: 1000 si compraste 1kg (1000g)"/> <span class="unit-hint">${unidadLabel}</span></td>
+      <td><input type="number" step="1" value="${ing.costoCompra||0}" title="Lo que pagaste por esa cantidad, tal cual la factura"/></td>
+      <td class="calc-cell unit-hint">${fmtGs(costoUnitarioActual)} / ${unidadLabel==='unid.'?'unid.':'g·ml'}</td>
+      <td><input type="number" step="0.01" value="${ing.stockActual||0}"/></td>
+      <td><input type="number" step="0.01" value="${ing.puntoPedido||0}"/></td>
+      <td><input type="number" step="0.01" value="${ing.puntoMaximo||0}"/></td>
+      <td class="estado-cell">${badgeFor(ing)}</td>
+      <td><button class="icon-btn">✕</button></td>
+    `;
+    const inputs = tr.querySelectorAll('input,select');
+    inputs[0].oninput = e=>{
+      ing.nombre = e.target.value;
+      debouncedSave('ingnombre-'+ing.id, ()=>updateDoc(doc(colCatalogo,ing.id),{nombre:ing.nombre}));
+    };
+    inputs[1].onchange = e=>{
+      ing.tipo = e.target.value;
+      updateDoc(doc(colCatalogo,ing.id),{tipo:ing.tipo});
+      render();
+    };
+    inputs[2].oninput = e=>{
+      ing.cantidadCompra = e.target.value;
+      ing.costoUnitario = calcCostoUnitario(ing);
+      debouncedSave('ingcant-'+ing.id, ()=>updateDoc(doc(colCatalogo,ing.id),{
+        cantidadCompra: parseFloat(ing.cantidadCompra)||1,
+        costoUnitario: ing.costoUnitario
+      }));
+      tr.querySelector('.calc-cell').textContent = fmtGs(ing.costoUnitario) + ' / ' + (unidadLabel==='unid.'?'unid.':'g·ml');
+    };
+    inputs[3].oninput = e=>{
+      ing.costoCompra = e.target.value;
+      ing.costoUnitario = calcCostoUnitario(ing);
+      debouncedSave('ingcosto-'+ing.id, ()=>updateDoc(doc(colCatalogo,ing.id),{
+        costoCompra: parseFloat(ing.costoCompra)||0,
+        costoUnitario: ing.costoUnitario
+      }));
+      tr.querySelector('.calc-cell').textContent = fmtGs(ing.costoUnitario) + ' / ' + (unidadLabel==='unid.'?'unid.':'g·ml');
+    };
+    inputs[4].oninput = e=>{
+      ing.stockActual = e.target.value;
+      debouncedSave('ingstock-'+ing.id, ()=>updateDoc(doc(colCatalogo,ing.id),{stockActual:parseFloat(ing.stockActual)||0}));
+      tr.querySelector('.estado-cell').innerHTML = badgeFor(ing);
+    };
+    inputs[5].oninput = e=>{
+      ing.puntoPedido = e.target.value;
+      debouncedSave('ingmin-'+ing.id, ()=>updateDoc(doc(colCatalogo,ing.id),{puntoPedido:parseFloat(ing.puntoPedido)||0}));
+      tr.querySelector('.estado-cell').innerHTML = badgeFor(ing);
+    };
+    inputs[6].oninput = e=>{
+      ing.puntoMaximo = e.target.value;
+      debouncedSave('ingmax-'+ing.id, ()=>updateDoc(doc(colCatalogo,ing.id),{puntoMaximo:parseFloat(ing.puntoMaximo)||0}));
+      tr.querySelector('.estado-cell').innerHTML = badgeFor(ing);
+    };
+    tr.querySelector('button.icon-btn').onclick = async ()=>{
+      if(confirm('¿Eliminar "'+ing.nombre+'" del catálogo? Las recetas que lo usan quedarán sin ese ingrediente asignado.')){
+        await deleteDoc(doc(colCatalogo,ing.id));
+      }
+    };
+    tbody.appendChild(tr);
+  });
+  scrollWrap.appendChild(table);
+  main.appendChild(scrollWrap);
+}
+function badgeFor(ing){
+  const estado = stockEstado(ing);
+  return estado==='low' ? '<span class="stock-badge low">REPONER</span>'
+       : estado==='high' ? '<span class="stock-badge high">EXCESO</span>'
+       : estado==='ok' ? '<span class="stock-badge ok">OK</span>'
+       : '—';
+}
+
+// ---------- UTILS ----------
+function escapeAttr(s){ return String(s).replace(/"/g,'&quot;'); }
+function escapeText(s){ return String(s).replace(/</g,'&lt;'); }
+
+render();
+</script>
+</body>
+</html>
