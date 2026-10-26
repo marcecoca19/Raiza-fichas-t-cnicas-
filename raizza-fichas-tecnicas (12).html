@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raiza — Fichas Técnicas y Stock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #313118;
+    --paper: #efeada;
+    --card: #f8f5ea;
+    --line: #d3cab0;
+    --sand: #cac4a7;
+    --brown: #66340d;
+    --terra: #d44b24;
+    --terra-dark: #a93a1a;
+    --olive: #7a7a0d;
+    --olive-dark: #55550a;
+    --muted: #76694b;
+    --warn-bg: #f7dccf;
+    --ok-bg: #e7e7c3;
+    --body: 'Nunito', Arial, sans-serif;
+    --display: 'Bebas Neue', 'Arial Narrow', Impact, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: var(--body); background: var(--paper); color: var(--ink); padding-bottom: 60px; }
+  header { padding: 22px 20px 14px; border-bottom: 2px solid var(--brown); display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 10px; max-width: 1180px; margin: 0 auto; }
+  header .brand { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+  header img.logo { height: 58px; width: auto; display: block; }
+  header .tag { font-family: var(--display); font-size: 22px; letter-spacing: 2px; color: var(--terra); line-height: 1; padding-bottom: 6px; }
+  header .sub { font-family: var(--display); font-size: 14px; letter-spacing: 3px; color: var(--brown); padding-bottom: 6px; }
+  nav { display: flex; gap: 6px; padding: 14px 20px 0; flex-wrap: wrap; max-width: 1180px; margin: 0 auto; }
+  nav button {
+    font-family: var(--display); font-size: 19px; letter-spacing: 1.5px; padding: 8px 20px 6px;
+    border: none; border-bottom: 3px solid transparent; background: transparent; color: var(--muted);
+    cursor: pointer;
+  }
+  nav button:hover { color: var(--brown); }
+  nav button.active { color: var(--terra); border-bottom-color: var(--terra); }
+  summary::-webkit-details-marker { display: none; }
+  .tab { display: none; }
+  .tab.active { display: block; }
+  main { max-width: 1060px; margin: 0 auto; padding: 24px 20px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 20px; margin-bottom: 18px; }
+  .card h2 { font-family: var(--display); font-weight: 400; font-size: 30px; letter-spacing: 1px; color: var(--terra); margin: 0 0 4px; line-height: 1.1; }
+  .card .count { font-family: var(--body); font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+  .top-bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-family: var(--body); font-size: 11.5px; color: var(--muted); }
+  input, select {
+    font-family: var(--body); font-size: 14px; padding: 8px 10px;
+    border: 1px solid var(--line); border-radius: 5px; background: var(--paper); color: var(--ink);
+  }
+  input[type="text"] { min-width: 160px; }
+  input[type="number"] { width: 90px; }
+  button.action {
+    font-family: var(--body); font-size: 13.5px; padding: 9px 16px; border: none; border-radius: 5px;
+    background: var(--terra); color: var(--paper); cursor: pointer; font-weight: 700; letter-spacing: 0.3px;
+  }
+  button.action:hover { background: var(--terra-dark); }
+  button.ghost {
+    font-family: var(--body); font-size: 12.5px; padding: 6px 12px; border: 1px solid var(--line);
+    border-radius: 5px; background: transparent; color: var(--muted); cursor: pointer;
+  }
+  .del { color: var(--terra); cursor: pointer; font-family: var(--body); font-size: 12px; background: none; border: none; }
+
+  /* LISTA (no cuadros) */
+  .lista { border-top: 1px solid var(--line); }
+  .item-row { border-bottom: 1px solid var(--line); }
+  .item-header {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+    padding: 13px 4px; cursor: pointer;
+  }
+  .item-header:hover { background: var(--paper); }
+  .item-nombre {
+    font-family: var(--body); font-size: 15px; font-weight: bold; border: none; background: transparent;
+    padding: 4px 2px; min-width: 180px;
+  }
+  .item-nombre:hover, .item-nombre:focus { background: var(--card); border-radius: 4px; outline: none; }
+  .item-meta { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; font-family: var(--body); font-size: 13px; color: var(--muted); }
+  .item-meta .costo { color: var(--brown); font-weight: bold; }
+  .badge { font-family: var(--body); font-size: 11.5px; padding: 3px 9px; border-radius: 12px; background: var(--paper); border: 1px solid var(--line); color: var(--muted); }
+  .badge.base { background: var(--brown); color: var(--paper); border-color: var(--brown); font-family: var(--display); letter-spacing: 1.5px; font-size: 13px; padding-top: 4px; }
+  .badge.ok { background: var(--ok-bg); color: var(--olive-dark); border-color: var(--olive); }
+  .badge.warn { background: var(--warn-bg); color: var(--terra-dark); border-color: var(--terra); }
+  .item-body { display: none; padding: 6px 4px 22px; background: var(--paper); }
+  .item-body.open { display: block; }
+  table { width: 100%; border-collapse: collapse; font-family: var(--body); font-size: 13.5px; }
+  th, td { text-align: left; padding: 7px 6px; border-bottom: 1px solid var(--line); }
+  th { font-family: var(--display); font-weight: 400; font-size: 14px; color: var(--brown); text-transform: uppercase; letter-spacing: 1.5px; }
+  td.num, th.num { text-align: right; }
+  td.readonly { color: var(--muted); }
+  .ing-input { width: 100%; border: 1px solid transparent; background: transparent; padding: 5px 6px; font-family: var(--body); font-size: 13.5px; border-radius: 4px; }
+  .ing-input:hover { border-color: var(--line); background: var(--card); }
+  .ing-input:focus { outline: none; border-color: var(--terra); background: var(--card); }
+  .ing-input.num { text-align: right; }
+  .resumen-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 14px; }
+  @media (max-width: 720px) { .resumen-grid { grid-template-columns: repeat(2, 1fr); } }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 12px; }
+  .stat .label { font-family: var(--body); font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.3px; }
+  .stat .value { font-family: var(--display); font-weight: 400; font-size: 26px; letter-spacing: 0.5px; margin-top: 2px; color: var(--brown); }
+  .stat .value.terra { color: var(--terra); }
+  .stat .value.olive { color: var(--olive-dark); }
+  .empty { font-family: var(--body); font-size: 13px; color: var(--muted); padding: 24px 0; text-align: center; }
+  .helptext { font-family: var(--body); font-size: 12.5px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+  .footer-tools { max-width: 1060px; margin: 0 auto; padding: 0 20px; display: flex; gap: 10px; justify-content: flex-end; }
+  .note { font-family: var(--body); font-size: 12.5px; color: var(--muted); }
+  .sync-status.saving { color: var(--muted); }
+  .sync-status.ok { color: var(--olive-dark); }
+  .sync-status.error { color: var(--terra-dark); font-weight: bold; }
+  tr.low-stock td { background: var(--warn-bg); }
+  tr.cat-header td {
+    background: var(--card); font-family: var(--display); font-size: 21px; letter-spacing: 2.5px;
+    color: var(--olive); font-weight: 400; padding: 16px 6px 6px; border-bottom: 2px solid var(--brown);
+  }
+  .lista-cat-header {
+    font-family: var(--display); font-size: 21px; letter-spacing: 2.5px; color: var(--olive);
+    padding: 18px 4px 6px; border-bottom: 2px solid var(--brown);
+  }
+  .lista-cat-header:first-child { padding-top: 4px; }
+  .compra-cell { display: flex; gap: 4px; align-items: center; }
+  .compra-cell input[type="number"] { width: 60px; }
+  .compra-cell select { width: auto; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <img class="logo" alt="Raiza" src="data:image/png;base64,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">
+    <div class="tag">Fichas técnicas &amp; stock</div>
+  </div>
+  <div class="sub">VILLA MORRA · ASUNCIÓN</div>
+</header>
+
+<nav>
+  <button class="tab-btn active" onclick="showTab('ingredientes')">Ingredientes</button>
+  <button class="tab-btn" onclick="showTab('fichas')">Fichas Técnicas</button>
+  <button class="tab-btn" onclick="showTab('stock')">Stock</button>
+</nav>
+
+<main>
+
+  <!-- INGREDIENTES -->
+  <div class="tab active" id="tab-ingredientes">
+    <div class="card">
+      <div class="top-bar">
+        <h2 style="margin:0;">Catálogo de ingredientes</h2>
+        <button class="action" onclick="addIngredienteCatalogo()">+ Agregar ingrediente</button>
+      </div>
+      <p class="helptext">Cargá cada insumo con su categoría y cómo lo comprás (ej: "1 bolsa de 25 kg a Gs. 350.000"). El costo por gramo/ml/unidad que usan las fichas se calcula solo — si cambia el precio o el tamaño del paquete, actualizalo acá y se recalcula en todo lo que lo usa.</p>
+      <table>
+        <thead><tr><th>Ingrediente</th><th>Categoría</th><th>Unidad receta</th><th class="num">Presentación</th><th class="num">Precio presentación</th><th class="num">Costo unitario</th><th></th></tr></thead>
+        <tbody id="ingredientes-tabla"></tbody>
+      </table>
+      <div class="empty" id="ingredientes-empty">Todavía no cargaste ingredientes.</div>
+    </div>
+  </div>
+
+  <!-- FICHAS TÉCNICAS -->
+  <div class="tab" id="tab-fichas">
+    <div class="card">
+      <div class="top-bar">
+        <div class="field">
+          <label>Food cost objetivo (%)</label>
+          <input type="number" id="objetivo-input" step="0.1" min="1" max="90" onchange="setObjetivo(this.value)">
+        </div>
+        <div class="helptext" style="max-width:420px;">Es el % del precio de venta que apuntás a que represente el costo de insumos. Se usa para marcar cada receta en verde/rojo y sugerir precio.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <details>
+        <summary style="cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+          <h2 style="margin:0;">Categorías de fichas <span style="font-family:var(--body); font-size:13px; color:var(--muted); letter-spacing:0;">▾ tocá para editar</span></h2>
+          <button class="ghost" onclick="event.preventDefault(); event.stopPropagation(); agregarCategoriaReceta()">+ Agregar categoría</button>
+        </summary>
+        <p class="helptext">Estas son las categorías que agrupan Preparaciones base y Recetas (hechas a partir de las secciones de tu menú). Podés renombrarlas, quitarlas, agregar nuevas y cambiar el orden con las flechas.</p>
+        <div id="lista-categorias-receta"></div>
+      </details>
+    </div>
+
+    <div class="card">
+      <div class="top-bar">
+        <h2 style="margin:0;">Preparaciones base</h2>
+        <button class="ghost" onclick="addElaboracion(true)">+ Agregar preparación base</button>
+      </div>
+      <p class="helptext">Componentes reutilizables (una masa, una salsa, una proteína desmechada) que después se usan como ingrediente dentro de otras recetas. Cargá cuántas unidades produce el lote ("rinde") para que se calcule el costo por unidad.</p>
+      <div class="lista" id="lista-bases"></div>
+      <div class="empty" id="bases-empty">Todavía no cargaste preparaciones base.</div>
+    </div>
+
+    <div class="card">
+      <div class="top-bar">
+        <h2 style="margin:0;">Recetas</h2>
+        <button class="action" onclick="addElaboracion(false)">+ Agregar receta</button>
+      </div>
+      <div class="lista" id="lista-recetas"></div>
+      <div class="empty" id="recetas-empty">Todavía no cargaste ninguna receta.</div>
+    </div>
+  </div>
+
+  <!-- STOCK -->
+  <div class="tab" id="tab-stock">
+    <div class="card">
+      <div class="top-bar">
+        <h2 style="margin:0;">Control de stock</h2>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="ghost" onclick="sincronizarStockDesdeIngredientes()">Sincronizar ingredientes</button>
+          <button class="ghost" onclick="sincronizarProductosTerminados()">Sincronizar productos terminados</button>
+        </div>
+      </div>
+      <p class="helptext">"Sincronizar ingredientes" trae al stock todo lo que esté en el catálogo de Ingredientes y todavía no esté acá. "Sincronizar productos terminados" trae todas las recetas cargadas en Fichas Técnicas (platos, pastelería, etc.) para controlar cuántas unidades tenés listas — por ejemplo Cheesecake o Carrot Cake. En ambos casos arrancan en cantidad 0 para que las completes; nombre, unidad y costo se calculan solos.</p>
+      <table>
+        <thead><tr><th>Insumo / producto</th><th>Unidad</th><th class="num">Costo unitario</th><th class="num">Cantidad actual</th><th class="num">Mínimo</th><th></th></tr></thead>
+        <tbody id="stock-tabla"></tbody>
+      </table>
+      <div class="empty" id="stock-empty">Todavía no hay insumos ni productos en el stock.</div>
+    </div>
+  </div>
+
+</main>
+
+<div class="footer-tools">
+  <div class="note sync-status" id="sync-status" style="margin-right:auto; align-self:center;">Conectando…</div>
+  <button class="ghost" onclick="document.getElementById('importFichaFile').click()">Importar ficha (JSON)</button>
+  <input type="file" id="importFichaFile" accept=".json" style="display:none" onchange="importarFichas(event)">
+</div>
+
+<script>
+var FIREBASE_URL = 'https://raiza-e2275-default-rtdb.firebaseio.com/fichas';
+var idCounter = 1;
+function nextId() { return idCounter++; }
+
+var CATEGORIAS_RECETA_DEFAULT = ['Para Compartir', 'Entradas', 'Brunch', 'Entre Panes', 'Pastas', 'Ensaladas', 'Pizzas', 'Carnes', 'Postres', 'Merienda', 'Cafetería', 'Vinos y Tragos', 'Menú Kids', 'Otros'];
+var data = { objetivoFoodCost: 30, categoriasReceta: CATEGORIAS_RECETA_DEFAULT.slice(), ingredientes: [], platos: [], stock: [] };
+var abiertos = {};
+var ultimoTsLocal = 0;
+var guardadoOk = true;
+
+function marcarEstado(texto, tipo) {
+  var el = document.getElementById('sync-status');
+  if (!el) return;
+  el.textContent = texto;
+  el.className = 'note sync-status ' + (tipo || '');
+}
+
+function recalcularIdCounter(obj) {
+  var maxId = 0;
+  var cat = obj.ingredientes || [];
+  for (var c = 0; c < cat.length; c++) { if (!cat[c].id) cat[c].id = nextId(); if (cat[c].id > maxId) maxId = cat[c].id; }
+  var platos = obj.platos || [];
+  for (var i = 0; i < platos.length; i++) {
+    if (!platos[i].id) platos[i].id = nextId();
+    if (platos[i].id > maxId) maxId = platos[i].id;
+    var ings = platos[i].ingredientes || [];
+    for (var j = 0; j < ings.length; j++) { if (!ings[j].id) ings[j].id = nextId(); if (ings[j].id > maxId) maxId = ings[j].id; }
+  }
+  var stock = obj.stock || [];
+  for (var k = 0; k < stock.length; k++) { if (!stock[k].id) stock[k].id = nextId(); if (stock[k].id > maxId) maxId = stock[k].id; }
+  idCounter = maxId + 1;
+}
+
+function guardarEnFirebase() {
+  data._ts = Date.now();
+  ultimoTsLocal = data._ts;
+  guardadoOk = false;
+  marcarEstado('Guardando…', 'saving');
+  fetch(FIREBASE_URL + '.json', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
+    .then(function(res) { if (!res.ok) throw new Error('save failed'); guardadoOk = true; marcarEstado('Guardado ✓ — sincronizado con tus socios', 'ok'); })
+    .catch(function() { marcarEstado('No se pudo guardar — revisá tu conexión y volvé a intentar el cambio', 'error'); });
+}
+
+function migrarCategoriasIngredientes(obj) {
+  var cambio = false;
+  var cat = obj.ingredientes || [];
+  for (var i = 0; i < cat.length; i++) {
+    if (cat[i].categoria === 'Abarrotes y Secos') { cat[i].categoria = 'Almacén'; cambio = true; }
+  }
+  return cambio;
+}
+
+function migrarCategoriasPlatos(obj) {
+  var cambio = false;
+  var platos = obj.platos || [];
+  for (var i = 0; i < platos.length; i++) {
+    if (!platos[i].categoria) { platos[i].categoria = 'Otros'; cambio = true; }
+  }
+  return cambio;
+}
+
+function migrarStock(obj) {
+  var cambio = false;
+  var stock = obj.stock || [];
+  for (var i = 0; i < stock.length; i++) {
+    if (!stock[i].tipo) {
+      stock[i].tipo = 'ingrediente';
+      if (stock[i].refId === undefined || stock[i].refId === null) stock[i].refId = stock[i].ingredienteId;
+      cambio = true;
+    }
+  }
+  return cambio;
+}
+
+function migrarListaCategorias(obj) {
+  var cambio = false;
+  if (!Array.isArray(obj.categoriasReceta) || obj.categoriasReceta.length === 0) {
+    obj.categoriasReceta = CATEGORIAS_RECETA_DEFAULT.slice();
+    cambio = true;
+  }
+  var platos = obj.platos || [];
+  for (var i = 0; i < platos.length; i++) {
+    var c = platos[i].categoria;
+    if (c && obj.categoriasReceta.indexOf(c) === -1) { obj.categoriasReceta.push(c); cambio = true; }
+  }
+  return cambio;
+}
+
+function cargarDeFirebase(esPoll) {
+  fetch(FIREBASE_URL + '.json').then(function(res) { return res.json(); }).then(function(remoto) {
+    if (!remoto) { if (!esPoll) { renderAll(); guardarEnFirebase(); } return; }
+    if (esPoll && remoto._ts && remoto._ts <= ultimoTsLocal) return;
+    recalcularIdCounter(remoto);
+    if (typeof remoto.objetivoFoodCost !== 'number') remoto.objetivoFoodCost = 30;
+    if (!Array.isArray(remoto.ingredientes)) remoto.ingredientes = [];
+    if (!Array.isArray(remoto.platos)) remoto.platos = [];
+    if (!Array.isArray(remoto.stock)) remoto.stock = [];
+    for (var m = 0; m < remoto.ingredientes.length; m++) {
+      var ing = remoto.ingredientes[m];
+      if (!ing.categoria) ing.categoria = 'Otros';
+      if (!ing.unidad) ing.unidad = 'g';
+      if (typeof ing.compraCantidad !== 'number') {
+        ing.compraCantidad = 1;
+        ing.compraUnidad = opcionesUnidadCompra(ing.unidad)[0].v;
+        ing.compraPrecio = Number(ing.costoUnitario || 0);
+      }
+      recalcularCostoIngrediente(ing);
+    }
+    for (var n = 0; n < remoto.platos.length; n++) {
+      var pl = remoto.platos[n];
+      if (typeof pl.esBase !== 'boolean') pl.esBase = false;
+      if (typeof pl.rinde !== 'number' || pl.rinde <= 0) pl.rinde = 1;
+      var lns = pl.ingredientes || [];
+      for (var q = 0; q < lns.length; q++) {
+        if (!lns[q].tipo) { lns[q].tipo = 'catalogo'; lns[q].refId = lns[q].ingredienteId; }
+      }
+    }
+    var huboMigracion = migrarCategoriasIngredientes(remoto);
+    var huboMigracion2 = migrarCategoriasPlatos(remoto);
+    var huboMigracion3 = migrarStock(remoto);
+    var huboMigracion4 = migrarListaCategorias(remoto);
+    data = remoto;
+    ultimoTsLocal = remoto._ts || Date.now();
+    renderAll();
+    marcarEstado(esPoll ? 'Actualizado — alguien más cargó datos' : 'Sincronizado ✓', 'ok');
+    if (huboMigracion || huboMigracion2 || huboMigracion3 || huboMigracion4) guardarEnFirebase();
+  }).catch(function() {
+    marcarEstado('Sin conexión con el servidor — mostrando la última versión local', 'error');
+  });
+}
+
+window.onbeforeunload = function(e) {
+  if (!guardadoOk) {
+    var msg = 'Un cambio todavía no se terminó de guardar en el servidor. Si cerrás ahora, se puede perder.';
+    e.returnValue = msg;
+    return msg;
+  }
+};
+
+function showTab(name) {
+  var tabs = document.querySelectorAll('.tab');
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+  document.getElementById('tab-' + name).classList.add('active');
+  var btns = document.querySelectorAll('.tab-btn');
+  for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+  event.target.classList.add('active');
+  renderAll();
+}
+
+function fmtUSD(n) { return 'Gs. ' + Math.round(Number(n || 0)).toLocaleString('es-PY'); }
+function unidadLabel(u) { if (u === 'g') return 'costo por gramo'; if (u === 'ml') return 'costo por ml'; return 'costo por unidad'; }
+
+var CATEGORIAS = ['Carnes y Aves', 'Pescados y Mariscos', 'Fiambres y Embutidos', 'Verduras y Frutas', 'Lácteos y Huevos', 'Panadería y Harinas', 'Almacén', 'Condimentos y Especias', 'Bebidas', 'Otros'];
+
+/* ---- CATEGORÍAS DE FICHAS (editables por el usuario, viven en data.categoriasReceta) ---- */
+function renderListaCategoriasReceta() {
+  var cont = document.getElementById('lista-categorias-receta');
+  if (!cont) return;
+  cont.innerHTML = '';
+  var cats = data.categoriasReceta || [];
+  for (var i = 0; i < cats.length; i++) {
+    (function(idx) {
+      var row = document.createElement('div');
+      row.style.cssText = 'display:flex; align-items:center; gap:8px; padding:6px 0; border-bottom:1px solid var(--line);';
+      var input = document.createElement('input');
+      input.type = 'text';
+      input.value = cats[idx];
+      input.className = 'ing-input';
+      input.style.cssText = 'flex:1; font-family:var(--body); font-size:14px; border:1px solid var(--line); border-radius:5px; padding:7px 9px;';
+      input.onchange = function() { renombrarCategoriaReceta(idx, this.value); };
+      row.appendChild(input);
+      var btnUp = document.createElement('button');
+      btnUp.className = 'ghost'; btnUp.textContent = '↑'; btnUp.title = 'Subir';
+      btnUp.onclick = function() { moverCategoriaReceta(idx, -1); };
+      row.appendChild(btnUp);
+      var btnDown = document.createElement('button');
+      btnDown.className = 'ghost'; btnDown.textContent = '↓'; btnDown.title = 'Bajar';
+      btnDown.onclick = function() { moverCategoriaReceta(idx, 1); };
+      row.appendChild(btnDown);
+      var btnDel = document.createElement('button');
+      btnDel.className = 'del'; btnDel.textContent = 'quitar';
+      btnDel.onclick = function() { quitarCategoriaReceta(idx); };
+      row.appendChild(btnDel);
+      cont.appendChild(row);
+    })(i);
+  }
+}
+function agregarCategoriaReceta() {
+  var nombre = prompt('Nombre de la nueva categoría:');
+  if (!nombre) return;
+  nombre = nombre.trim();
+  if (!nombre) return;
+  if (data.categoriasReceta.indexOf(nombre) !== -1) { alert('Esa categoría ya existe.'); return; }
+  var posOtros = data.categoriasReceta.indexOf('Otros');
+  if (posOtros === -1) data.categoriasReceta.push(nombre);
+  else data.categoriasReceta.splice(posOtros, 0, nombre);
+  renderAll(); guardarEnFirebase();
+}
+function renombrarCategoriaReceta(idx, nuevoNombre) {
+  nuevoNombre = (nuevoNombre || '').trim();
+  var actual = data.categoriasReceta[idx];
+  if (!nuevoNombre || nuevoNombre === actual) { renderAll(); return; }
+  if (data.categoriasReceta.indexOf(nuevoNombre) !== -1) { alert('Ya existe una categoría con ese nombre.'); renderAll(); return; }
+  data.categoriasReceta[idx] = nuevoNombre;
+  for (var i = 0; i < data.platos.length; i++) {
+    if (data.platos[i].categoria === actual) data.platos[i].categoria = nuevoNombre;
+  }
+  renderAll(); guardarEnFirebase();
+}
+function moverCategoriaReceta(idx, dir) {
+  var nuevaPos = idx + dir;
+  if (nuevaPos < 0 || nuevaPos >= data.categoriasReceta.length) return;
+  var arr = data.categoriasReceta;
+  var tmp = arr[idx]; arr[idx] = arr[nuevaPos]; arr[nuevaPos] = tmp;
+  renderAll(); guardarEnFirebase();
+}
+function quitarCategoriaReceta(idx) {
+  var nombre = data.categoriasReceta[idx];
+  var enUso = data.platos.filter(function(p) { return p.categoria === nombre; }).length;
+  var msg = enUso > 0
+    ? ('Hay ' + enUso + ' ficha(s) usando "' + nombre + '". Si la quitás, esas fichas van a pasar a "Otros". ¿Continuar?')
+    : ('¿Quitar la categoría "' + nombre + '"?');
+  if (!confirm(msg)) return;
+  data.categoriasReceta.splice(idx, 1);
+  if (data.categoriasReceta.indexOf('Otros') === -1) data.categoriasReceta.push('Otros');
+  for (var i = 0; i < data.platos.length; i++) {
+    if (data.platos[i].categoria === nombre) data.platos[i].categoria = 'Otros';
+  }
+  renderAll(); guardarEnFirebase();
+}
+
+function opcionesUnidadCompra(unidadBase) {
+  if (unidadBase === 'g') return [{ v: 'g', l: 'g', f: 1 }, { v: 'kg', l: 'kg', f: 1000 }];
+  if (unidadBase === 'ml') return [{ v: 'ml', l: 'ml', f: 1 }, { v: 'l', l: 'L', f: 1000 }];
+  return [{ v: 'unidad', l: 'unidad(es)', f: 1 }, { v: 'docena', l: 'docena', f: 12 }];
+}
+function factorUnidadCompra(unidadBase, unidadCompra) {
+  var o = opcionesUnidadCompra(unidadBase);
+  for (var i = 0; i < o.length; i++) if (o[i].v === unidadCompra) return o[i].f;
+  return 1;
+}
+function recalcularCostoIngrediente(ing) {
+  var factor = factorUnidadCompra(ing.unidad, ing.compraUnidad);
+  var cantidadBase = Number(ing.compraCantidad || 0) * factor;
+  ing.costoUnitario = cantidadBase > 0 ? Number(ing.compraPrecio || 0) / cantidadBase : 0;
+}
+
+/* ---- CATÁLOGO ---- */
+function findIngredienteCatalogo(id) { for (var i = 0; i < data.ingredientes.length; i++) if (data.ingredientes[i].id === id) return data.ingredientes[i]; return null; }
+
+function addIngredienteCatalogo() {
+  var nuevo = { id: nextId(), nombre: '', categoria: 'Otros', unidad: 'g', compraCantidad: 1, compraUnidad: 'kg', compraPrecio: 0, costoUnitario: 0 };
+  recalcularCostoIngrediente(nuevo);
+  data.ingredientes.push(nuevo);
+  renderAll(); guardarEnFirebase();
+}
+function delIngredienteCatalogo(id) {
+  if (!confirm('¿Eliminar este ingrediente del catálogo? No se puede deshacer.')) return;
+  data.ingredientes = data.ingredientes.filter(function(x) { return x.id !== id; });
+  renderAll(); guardarEnFirebase();
+}
+function editIngredienteCatalogo(id, campo, value) {
+  var ing = findIngredienteCatalogo(id);
+  if (!ing) return;
+  if (campo === 'compraCantidad' || campo === 'compraPrecio') ing[campo] = parseFloat(value) || 0;
+  else if (campo === 'unidad') { ing.unidad = value; ing.compraUnidad = opcionesUnidadCompra(value)[0].v; }
+  else ing[campo] = value;
+  recalcularCostoIngrediente(ing);
+  renderAll(); guardarEnFirebase();
+}
+function renderIngredientesCatalogo() {
+  var tbody = document.getElementById('ingredientes-tabla');
+  tbody.innerHTML = '';
+  var ordenado = data.ingredientes.slice().sort(function(a, b) {
+    var ca = a.categoria || 'Otros', cb = b.categoria || 'Otros';
+    if (ca !== cb) return ca.localeCompare(cb);
+    return (a.nombre || '').localeCompare(b.nombre || '');
+  });
+  var catActual = null;
+  for (var i = 0; i < ordenado.length; i++) {
+    var ing = ordenado[i];
+    if (ing.categoria !== catActual) {
+      catActual = ing.categoria;
+      var catRow = document.createElement('tr');
+      catRow.className = 'cat-header';
+      catRow.innerHTML = '<td colspan="7">' + (catActual || 'Otros') + '</td>';
+      tbody.appendChild(catRow);
+    }
+    var opciones = opcionesUnidadCompra(ing.unidad);
+    var row = document.createElement('tr');
+    row.innerHTML =
+      '<td><input type="text" class="ing-input" value="' + (ing.nombre || '').replace(/"/g, '&quot;') + '" placeholder="Ej: Lomo de res" onchange="editIngredienteCatalogo(' + ing.id + ', \'nombre\', this.value)"></td>' +
+      '<td><select class="ing-input" onchange="editIngredienteCatalogo(' + ing.id + ', \'categoria\', this.value)">' + CATEGORIAS.map(function(c) { return '<option value="' + c + '"' + (ing.categoria === c ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select></td>' +
+      '<td><select class="ing-input" onchange="editIngredienteCatalogo(' + ing.id + ', \'unidad\', this.value)">' + ['g', 'ml', 'unidad'].map(function(u) { return '<option value="' + u + '"' + (ing.unidad === u ? ' selected' : '') + '>' + u + '</option>'; }).join('') + '</select></td>' +
+      '<td><div class="compra-cell"><input type="number" step="0.01" min="0" value="' + ing.compraCantidad + '" onchange="editIngredienteCatalogo(' + ing.id + ', \'compraCantidad\', this.value)"><select onchange="editIngredienteCatalogo(' + ing.id + ', \'compraUnidad\', this.value)">' + opciones.map(function(o) { return '<option value="' + o.v + '"' + (ing.compraUnidad === o.v ? ' selected' : '') + '>' + o.l + '</option>'; }).join('') + '</select></div></td>' +
+      '<td><input type="number" step="1" min="0" class="ing-input num" value="' + ing.compraPrecio + '" onchange="editIngredienteCatalogo(' + ing.id + ', \'compraPrecio\', this.value)"></td>' +
+      '<td class="num readonly">' + fmtUSD(ing.costoUnitario) + ' / ' + ing.unidad + '</td>' +
+      '<td><button class="del" onclick="delIngredienteCatalogo(' + ing.id + ')">quitar</button></td>';
+    tbody.appendChild(row);
+  }
+  document.getElementById('ingredientes-empty').style.display = data.ingredientes.length ? 'none' : 'block';
+}
+
+/* ---- FICHAS TÉCNICAS (preparaciones base + recetas) ---- */
+function findPlato(id) { for (var i = 0; i < data.platos.length; i++) if (data.platos[i].id === id) return data.platos[i]; return null; }
+
+function costoTotalLote(plato, visited) {
+  visited = visited || [];
+  if (visited.indexOf(plato.id) !== -1) return 0;
+  var v2 = visited.concat([plato.id]);
+  var t = 0;
+  var ings = plato.ingredientes || [];
+  for (var i = 0; i < ings.length; i++) {
+    var ln = ings[i];
+    if (ln.tipo === 'preparacion') {
+      var prep = findPlato(ln.refId);
+      if (prep) t += Number(ln.cantidad || 0) * costoPorUnidad(prep, v2);
+    } else {
+      var cat = findIngredienteCatalogo(ln.refId);
+      if (cat) t += Number(ln.cantidad || 0) * Number(cat.costoUnitario || 0);
+    }
+  }
+  return t;
+}
+function costoPorUnidad(plato, visited) {
+  var total = costoTotalLote(plato, visited);
+  var rinde = Number(plato.rinde) > 0 ? Number(plato.rinde) : 1;
+  return total / rinde;
+}
+function foodCostPct(plato) {
+  var costo = costoPorUnidad(plato);
+  var precio = Number(plato.precioVenta || 0);
+  if (precio <= 0) return null;
+  return (costo / precio) * 100;
+}
+function setObjetivo(value) { data.objetivoFoodCost = parseFloat(value) || 30; renderAll(); guardarEnFirebase(); }
+
+function addElaboracion(esBase) {
+  var nuevo = { id: nextId(), nombre: esBase ? 'Preparación nueva' : 'Receta nueva', categoria: 'Otros', esBase: esBase, rinde: 1, precioVenta: 0, ingredientes: [] };
+  data.platos.push(nuevo);
+  abiertos[nuevo.id] = true;
+  renderAll(); guardarEnFirebase();
+}
+function delPlato(id) {
+  if (!confirm('¿Eliminar esta ficha? Si otra receta la usa como preparación, esa línea va a quedar sin referencia. No se puede deshacer.')) return;
+  data.platos = data.platos.filter(function(p) { return p.id !== id; });
+  renderAll(); guardarEnFirebase();
+}
+function toggleAbierto(id) { abiertos[id] = !abiertos[id]; renderAll(); }
+function editPlatoCampo(id, campo, value) {
+  var p = findPlato(id);
+  if (!p) return;
+  if (campo === 'precioVenta' || campo === 'rinde') p[campo] = parseFloat(value) || 0;
+  else p[campo] = value;
+  renderAll(); guardarEnFirebase();
+}
+function addIngredienteAPlato(platoId) {
+  if (data.ingredientes.length === 0 && data.platos.filter(function(p) { return p.esBase && p.id !== platoId; }).length === 0) {
+    alert('Primero cargá ingredientes en la pestaña "Ingredientes" (o una preparación base) para poder agregarlos acá.');
+    return;
+  }
+  var p = findPlato(platoId);
+  if (!p) return;
+  if (!p.ingredientes) p.ingredientes = [];
+  var primerCat = data.ingredientes[0];
+  p.ingredientes.push({ id: nextId(), tipo: 'catalogo', refId: primerCat ? primerCat.id : null, cantidad: 0 });
+  abiertos[platoId] = true;
+  renderAll(); guardarEnFirebase();
+}
+function delIngredienteDePlato(platoId, lineId) {
+  var p = findPlato(platoId);
+  if (!p) return;
+  p.ingredientes = p.ingredientes.filter(function(i) { return i.id !== lineId; });
+  abiertos[platoId] = true;
+  renderAll(); guardarEnFirebase();
+}
+function editIngredienteDePlato(platoId, lineId, campo, value) {
+  var p = findPlato(platoId);
+  if (!p) return;
+  var line = null;
+  for (var i = 0; i < p.ingredientes.length; i++) if (p.ingredientes[i].id === lineId) { line = p.ingredientes[i]; break; }
+  if (!line) return;
+  if (campo === 'cantidad') line.cantidad = parseFloat(value) || 0;
+  else if (campo === 'seleccion') {
+    var partes = value.split(':');
+    line.tipo = partes[0];
+    line.refId = parseInt(partes[1], 10);
+  }
+  abiertos[platoId] = true;
+  renderAll(); guardarEnFirebase();
+}
+
+function unidadDeLinea(line) {
+  if (line.tipo === 'preparacion') { var prep = findPlato(line.refId); return prep ? 'unidad de ' + prep.nombre : '—'; }
+  var cat = findIngredienteCatalogo(line.refId);
+  return cat ? cat.unidad : '—';
+}
+function costoUnitDeLinea(line) {
+  if (line.tipo === 'preparacion') { var prep = findPlato(line.refId); return prep ? costoPorUnidad(prep) : 0; }
+  var cat = findIngredienteCatalogo(line.refId);
+  return cat ? Number(cat.costoUnitario || 0) : 0;
+}
+
+/* ---- STOCK ---- */
+function findStockItem(id) { for (var i = 0; i < data.stock.length; i++) if (data.stock[i].id === id) return data.stock[i]; return null; }
+function delStockItem(id) {
+  if (!confirm('¿Quitar este insumo del stock? No se puede deshacer.')) return;
+  data.stock = data.stock.filter(function(s) { return s.id !== id; });
+  renderAll(); guardarEnFirebase();
+}
+function editStockCampo(id, campo, value) {
+  var s = findStockItem(id);
+  if (!s) return;
+  s[campo] = parseFloat(value) || 0;
+  renderAll(); guardarEnFirebase();
+}
+function sincronizarStockDesdeIngredientes() {
+  var existentes = {};
+  for (var i = 0; i < data.stock.length; i++) if (data.stock[i].tipo === 'ingrediente') existentes[data.stock[i].refId] = true;
+  var agregados = 0;
+  for (var j = 0; j < data.ingredientes.length; j++) {
+    var ing = data.ingredientes[j];
+    if (existentes[ing.id]) continue;
+    data.stock.push({ id: nextId(), tipo: 'ingrediente', refId: ing.id, cantidadActual: 0, cantidadMinima: 0 });
+    agregados++;
+  }
+  renderAll(); guardarEnFirebase();
+  alert(agregados > 0 ? ('Se agregaron ' + agregados + ' insumo(s) nuevo(s) al stock.') : 'No hay ingredientes nuevos para agregar.');
+}
+function sincronizarProductosTerminados() {
+  var existentes = {};
+  for (var i = 0; i < data.stock.length; i++) if (data.stock[i].tipo === 'producto') existentes[data.stock[i].refId] = true;
+  var agregados = 0;
+  for (var j = 0; j < data.platos.length; j++) {
+    var p = data.platos[j];
+    if (p.esBase) continue;
+    if (existentes[p.id]) continue;
+    data.stock.push({ id: nextId(), tipo: 'producto', refId: p.id, cantidadActual: 0, cantidadMinima: 0 });
+    agregados++;
+  }
+  renderAll(); guardarEnFirebase();
+  alert(agregados > 0 ? ('Se agregaron ' + agregados + ' producto(s) terminado(s) nuevo(s) al stock.') : 'No hay recetas nuevas para agregar al stock.');
+}
+function renderStock() {
+  var tbody = document.getElementById('stock-tabla');
+  tbody.innerHTML = '';
+  var lista = data.stock.map(function(s) {
+    if (s.tipo === 'producto') {
+      var p = findPlato(s.refId);
+      return { item: s, esProducto: true, nombre: p ? p.nombre : '(receta eliminada)', unidad: 'unidad', costo: p ? costoPorUnidad(p) : 0, categoria: p ? (p.categoria || 'Otros') : 'Otros' };
+    }
+    var cat = findIngredienteCatalogo(s.refId);
+    return { item: s, esProducto: false, nombre: cat ? cat.nombre : '(ingrediente eliminado)', unidad: cat ? cat.unidad : '—', costo: cat ? cat.costoUnitario : 0, categoria: null };
+  });
+
+  var ingredientesList = lista.filter(function(x) { return !x.esProducto; }).sort(function(a, b) { return a.nombre.localeCompare(b.nombre); });
+  var productosList = lista.filter(function(x) { return x.esProducto; }).sort(function(a, b) {
+    var ia = data.categoriasReceta.indexOf(a.categoria); if (ia === -1) ia = data.categoriasReceta.length;
+    var ib = data.categoriasReceta.indexOf(b.categoria); if (ib === -1) ib = data.categoriasReceta.length;
+    if (ia !== ib) return ia - ib;
+    return a.nombre.localeCompare(b.nombre);
+  });
+
+  function renderFilaStock(entry) {
+    var s = entry.item;
+    var bajo = Number(s.cantidadMinima) > 0 && Number(s.cantidadActual) <= Number(s.cantidadMinima);
+    var row = document.createElement('tr');
+    if (bajo) row.className = 'low-stock';
+    row.innerHTML = '<td>' + entry.nombre + '</td><td class="readonly">' + entry.unidad + '</td><td class="num readonly">' + fmtUSD(entry.costo) + '</td>' +
+      '<td><input type="number" step="0.01" min="0" class="ing-input num" value="' + s.cantidadActual + '" onchange="editStockCampo(' + s.id + ', \'cantidadActual\', this.value)"></td>' +
+      '<td><input type="number" step="0.01" min="0" class="ing-input num" value="' + s.cantidadMinima + '" onchange="editStockCampo(' + s.id + ', \'cantidadMinima\', this.value)"></td>' +
+      '<td><button class="del" onclick="delStockItem(' + s.id + ')">quitar</button></td>';
+    tbody.appendChild(row);
+  }
+
+  if (ingredientesList.length) {
+    var h1 = document.createElement('tr');
+    h1.className = 'cat-header';
+    h1.innerHTML = '<td colspan="6">Ingredientes</td>';
+    tbody.appendChild(h1);
+    for (var i = 0; i < ingredientesList.length; i++) renderFilaStock(ingredientesList[i]);
+  }
+
+  if (productosList.length) {
+    var h2 = document.createElement('tr');
+    h2.className = 'cat-header';
+    h2.innerHTML = '<td colspan="6">Productos terminados</td>';
+    tbody.appendChild(h2);
+    var catActual = null;
+    for (var k = 0; k < productosList.length; k++) {
+      if (productosList[k].categoria !== catActual) {
+        catActual = productosList[k].categoria;
+        var subRow = document.createElement('tr');
+        subRow.innerHTML = '<td colspan="6" style="padding-left:18px; font-family:var(--body); font-size:11.5px; text-transform:uppercase; letter-spacing:0.3px; color:var(--muted); border-bottom:1px solid var(--line);">' + (catActual || 'Otros') + '</td>';
+        tbody.appendChild(subRow);
+      }
+      renderFilaStock(productosList[k]);
+    }
+  }
+  document.getElementById('stock-empty').style.display = data.stock.length ? 'none' : 'block';
+}
+
+/* ---- RENDER LISTA DE FICHAS ---- */
+function renderListaElaboraciones(contId, emptyId, esBase) {
+  var cont = document.getElementById(contId);
+  cont.innerHTML = '';
+  var items = data.platos.filter(function(p) { return !!p.esBase === esBase; });
+  document.getElementById(emptyId).style.display = items.length ? 'none' : 'block';
+
+  items.sort(function(a, b) {
+    var ia = data.categoriasReceta.indexOf(a.categoria); if (ia === -1) ia = data.categoriasReceta.length;
+    var ib = data.categoriasReceta.indexOf(b.categoria); if (ib === -1) ib = data.categoriasReceta.length;
+    if (ia !== ib) return ia - ib;
+    return (a.nombre || '').localeCompare(b.nombre || '');
+  });
+
+  var catActual = null;
+  for (var i = 0; i < items.length; i++) {
+    var p = items[i];
+    if (p.categoria !== catActual) {
+      catActual = p.categoria;
+      var catHeader = document.createElement('div');
+      catHeader.className = 'lista-cat-header';
+      catHeader.textContent = catActual || 'Otros';
+      cont.appendChild(catHeader);
+    }
+    var costoLote = costoTotalLote(p);
+    var costoUnit = costoPorUnidad(p);
+    var fc = esBase ? null : foodCostPct(p);
+    var objetivo = data.objetivoFoodCost;
+
+    var row = document.createElement('div');
+    row.className = 'item-row';
+
+    var header = document.createElement('div');
+    header.className = 'item-header';
+    header.onclick = (function(id) { return function(ev) {
+      if (['INPUT', 'SELECT', 'BUTTON'].indexOf(ev.target.tagName) !== -1) return;
+      toggleAbierto(id);
+    }; })(p.id);
+
+    var nombreHtml = '<input type="text" class="item-nombre" value="' + p.nombre.replace(/"/g, '&quot;') + '" onclick="event.stopPropagation()" onchange="editPlatoCampo(' + p.id + ', \'nombre\', this.value)">';
+    var baseBadge = esBase ? '<span class="badge base">Preparación base</span>' : '';
+    var catHtml = baseBadge + '<select onclick="event.stopPropagation()" onchange="editPlatoCampo(' + p.id + ', \'categoria\', this.value)">' +
+      data.categoriasReceta.map(function(c) { return '<option value="' + c + '"' + (p.categoria === c ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select>';
+
+    var metaBadges = '<span class="badge">Rinde ' + p.rinde + '</span><span class="badge costo">' + fmtUSD(costoUnit) + ' / unidad</span>';
+    if (!esBase) {
+      var badgeClass = fc === null ? '' : (fc <= objetivo ? 'ok' : 'warn');
+      var badgeTexto = fc === null ? 'Sin precio' : ('Food cost ' + fc.toFixed(1) + '%');
+      metaBadges += '<span class="badge ' + badgeClass + '">' + badgeTexto + '</span>';
+    }
+
+    header.innerHTML = '<div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">' + nombreHtml + catHtml + '</div>' +
+      '<div class="item-meta">' + metaBadges + '<button class="del" onclick="event.stopPropagation(); delPlato(' + p.id + ')">eliminar</button></div>';
+    row.appendChild(header);
+
+    var body = document.createElement('div');
+    body.className = 'item-body' + (abiertos[p.id] ? ' open' : '');
+
+    var rindeHtml = '<div class="field" style="display:inline-flex; margin-right:16px;"><label>Rinde (unidades que produce el lote)</label><input type="number" step="1" min="1" value="' + p.rinde + '" onchange="editPlatoCampo(' + p.id + ', \'rinde\', this.value)"></div>';
+
+    var opcionesLinea = data.ingredientes.map(function(ci) { return { label: ci.nombre || '(sin nombre)', value: 'catalogo:' + ci.id }; })
+      .concat(data.platos.filter(function(pb) { return pb.esBase && pb.id !== p.id; }).map(function(pb) { return { label: pb.nombre + ' (preparación)', value: 'preparacion:' + pb.id }; }));
+
+    var tabla = '<table><thead><tr><th>Ingrediente / preparación</th><th class="num">Cantidad</th><th>Unidad</th><th class="num">Costo unitario</th><th class="num">Subtotal</th><th></th></tr></thead><tbody>';
+    var ings = p.ingredientes || [];
+    for (var j = 0; j < ings.length; j++) {
+      var line = ings[j];
+      var costoUnitLinea = costoUnitDeLinea(line);
+      var subtotal = Number(line.cantidad || 0) * costoUnitLinea;
+      var valorActual = line.tipo + ':' + line.refId;
+      var selectHtml = '<select class="ing-input" onchange="editIngredienteDePlato(' + p.id + ', ' + line.id + ', \'seleccion\', this.value)">' +
+        opcionesLinea.map(function(o) { return '<option value="' + o.value + '"' + (o.value === valorActual ? ' selected' : '') + '>' + o.label + '</option>'; }).join('') + '</select>';
+      tabla += '<tr><td>' + selectHtml + '</td>' +
+        '<td><input type="number" step="0.01" min="0" class="ing-input num" value="' + line.cantidad + '" onchange="editIngredienteDePlato(' + p.id + ', ' + line.id + ', \'cantidad\', this.value)"></td>' +
+        '<td class="readonly">' + unidadDeLinea(line) + '</td>' +
+        '<td class="num readonly">' + fmtUSD(costoUnitLinea) + '</td>' +
+        '<td class="num">' + fmtUSD(subtotal) + '</td>' +
+        '<td><button class="del" onclick="delIngredienteDePlato(' + p.id + ', ' + line.id + ')">quitar</button></td></tr>';
+    }
+    tabla += '</tbody></table>';
+
+    var resumen;
+    if (esBase) {
+      resumen = '<div class="resumen-grid" style="grid-template-columns:repeat(2,1fr);">' +
+        '<div class="stat"><div class="label">Costo total del lote</div><div class="value">' + fmtUSD(costoLote) + '</div></div>' +
+        '<div class="stat"><div class="label">Costo por unidad (÷ rinde)</div><div class="value olive">' + fmtUSD(costoUnit) + '</div></div>' +
+        '</div>';
+    } else {
+      var margenPct = fc !== null ? (100 - fc) : null;
+      var sugerido = objetivo > 0 ? (costoUnit / (objetivo / 100)) : 0;
+      resumen = '<div class="resumen-grid">' +
+        '<div class="stat"><div class="label">Costo por unidad</div><div class="value">' + fmtUSD(costoUnit) + '</div></div>' +
+        '<div class="stat"><div class="label">Precio sugerido (' + objetivo + '% food cost)</div><div class="value olive">' + fmtUSD(sugerido) + '</div></div>' +
+        '<div class="stat"><div class="label">Precio de venta actual</div><div class="value"><input type="number" step="1" min="0" style="font-size:18px; font-weight:bold; width:110px;" value="' + p.precioVenta + '" onchange="editPlatoCampo(' + p.id + ', \'precioVenta\', this.value)"></div></div>' +
+        '<div class="stat"><div class="label">Margen de contribución</div><div class="value ' + (margenPct !== null && margenPct >= (100 - objetivo) ? 'olive' : 'terra') + '">' + (margenPct !== null ? margenPct.toFixed(1) + '%' : '—') + '</div></div>' +
+        '</div>';
+    }
+
+    body.innerHTML = rindeHtml + tabla + '<button class="ghost" style="margin-top:10px;" onclick="addIngredienteAPlato(' + p.id + ')">+ Agregar ingrediente / preparación</button>' + resumen;
+    row.appendChild(body);
+    cont.appendChild(row);
+  }
+}
+
+function renderAll() {
+  renderIngredientesCatalogo();
+  document.getElementById('objetivo-input').value = data.objetivoFoodCost;
+  renderListaCategoriasReceta();
+  renderListaElaboraciones('lista-bases', 'bases-empty', true);
+  renderListaElaboraciones('lista-recetas', 'recetas-empty', false);
+  renderStock();
+}
+
+cargarDeFirebase(false);
+setInterval(function() { cargarDeFirebase(true); }, 20000);
+
+function normalizarNombre(n) { return (n || '').trim().toLowerCase(); }
+
+function resolverOCrearIngrediente(spec) {
+  var nombreN = normalizarNombre(spec.nombre);
+  for (var i = 0; i < data.ingredientes.length; i++) {
+    if (normalizarNombre(data.ingredientes[i].nombre) === nombreN) return data.ingredientes[i].id;
+  }
+  var nuevo = {
+    id: nextId(),
+    nombre: spec.nombre,
+    categoria: spec.categoria || 'Otros',
+    unidad: spec.unidad || 'g',
+    compraCantidad: typeof spec.compraCantidad === 'number' ? spec.compraCantidad : 1,
+    compraUnidad: spec.compraUnidad || opcionesUnidadCompra(spec.unidad || 'g')[0].v,
+    compraPrecio: typeof spec.compraPrecio === 'number' ? spec.compraPrecio : 0,
+    costoUnitario: 0
+  };
+  recalcularCostoIngrediente(nuevo);
+  data.ingredientes.push(nuevo);
+  return nuevo.id;
+}
+
+function resolverOCrearPlato(spec) {
+  var nombreN = normalizarNombre(spec.nombre);
+  var existente = null;
+  for (var i = 0; i < data.platos.length; i++) {
+    if (!!data.platos[i].esBase === !!spec.esBase && normalizarNombre(data.platos[i].nombre) === nombreN) { existente = data.platos[i]; break; }
+  }
+  if (!existente) {
+    existente = { id: nextId(), nombre: spec.nombre, esBase: !!spec.esBase, categoria: spec.categoria || 'Otros', rinde: 1, precioVenta: 0, ingredientes: [] };
+    data.platos.push(existente);
+  }
+  existente.rinde = typeof spec.rinde === 'number' && spec.rinde > 0 ? spec.rinde : (existente.rinde || 1);
+  if (typeof spec.precioVenta === 'number') existente.precioVenta = spec.precioVenta;
+  existente._ingredientesSpec = spec.ingredientes || [];
+  return existente;
+}
+
+function importarFichas(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(evt) {
+    try {
+      var paquete = JSON.parse(evt.target.result);
+      if (!paquete || (!Array.isArray(paquete.ingredientes) && !Array.isArray(paquete.platos))) {
+        alert('El archivo no tiene el formato esperado.');
+        return;
+      }
+      var ingredientesEntrantes = paquete.ingredientes || [];
+      for (var i = 0; i < ingredientesEntrantes.length; i++) resolverOCrearIngrediente(ingredientesEntrantes[i]);
+
+      var platosEntrantes = paquete.platos || [];
+      var platosResueltos = [];
+      for (var p = 0; p < platosEntrantes.length; p++) platosResueltos.push(resolverOCrearPlato(platosEntrantes[p]));
+
+      for (var q = 0; q < platosResueltos.length; q++) {
+        var plato = platosResueltos[q];
+        var spec = plato._ingredientesSpec || [];
+        delete plato._ingredientesSpec;
+        plato.ingredientes = [];
+        for (var r = 0; r < spec.length; r++) {
+          var linea = spec[r];
+          var refId = null;
+          if (linea.tipo === 'preparacion') {
+            for (var s = 0; s < data.platos.length; s++) {
+              if (data.platos[s].esBase && normalizarNombre(data.platos[s].nombre) === normalizarNombre(linea.refNombre)) { refId = data.platos[s].id; break; }
+            }
+            if (refId === null) {
+              var nuevaBase = { id: nextId(), nombre: linea.refNombre, esBase: true, categoria: 'Otros', rinde: 1, precioVenta: 0, ingredientes: [] };
+              data.platos.push(nuevaBase);
+              refId = nuevaBase.id;
+            }
+          } else {
+            refId = resolverOCrearIngrediente({ nombre: linea.refNombre, unidad: linea.unidad, categoria: linea.categoria });
+          }
+          plato.ingredientes.push({ id: nextId(), tipo: linea.tipo || 'catalogo', refId: refId, cantidad: Number(linea.cantidad || 0) });
+        }
+      }
+
+      renderAll();
+      guardarEnFirebase();
+      alert('Ficha importada y sincronizada. Revisá los precios en la pestaña "Ingredientes" para los insumos nuevos.');
+    } catch (err) {
+      alert('No se pudo leer el archivo — verificá que sea el JSON que te pasé.');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+</script>
+
+</body>
+</html>
